@@ -129,6 +129,22 @@ final class ResponseAssertTest extends PHPUnitTestCase {
 	}
 
 	#[Test]
+	#[DataProvider('dataAssertCookieExists')]
+	#[TestDox('assertCookieExists()')]
+	public function testAssertCookieExists(?string $exceptionMessage, ResponseInterface $response, string $expectedName): void {
+		$this->assert($exceptionMessage, $response, static function (ResponseAssert $response) use ($expectedName): void {
+			$response->assertCookieExists($expectedName);
+		});
+	}
+
+	public static function dataAssertCookieExists(): array {
+		return [
+			'passed' => [null, new Response(200, ['Set-Cookie' => ['key=value']]), 'key'],
+			'failed' => ['Expected the response to have the cookie "key"', new Response(200), 'key'],
+		];
+	}
+
+	#[Test]
 	#[DataProvider('dataAssertHeaderEquals')]
 	#[TestDox('assertHeaderEquals()')]
 	public function testAssertHeaderEquals(?string $exceptionMessage, ResponseInterface $response, string $expectedHeader, string $expectedValue): void {

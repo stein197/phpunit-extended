@@ -7,10 +7,12 @@ use PHPUnit\Framework\GeneratorNotSupportedException;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ResponseInterface;
 use RuntimeException;
+use function explode;
+use function preg_split;
+use const PREG_SPLIT_NO_EMPTY;
 
 // TODO: assertCookieEquals
 // TODO: assertCookieNotEquals
-// TODO: assertCookieExists
 // TODO: assertCookieNotExists
 // TODO: ?assertDownload, assertFile etc.
 final class ResponseAssert {
@@ -122,6 +124,19 @@ final class ResponseAssert {
 	 */
 	public function assertContentType(string $contentType): void {
 		$this->assertHeaderEquals('Content-Type', $contentType);
+	}
+
+	/**
+	 * Assert that the response has the given cookie.
+	 * @param string $name Cookie name.
+	 * @return void
+	 * @throws ExpectationFailedException If the response does not have a cookie with the given name.
+	 * ```php
+	 * $this->assertCookieExists('ga');
+	 * ```
+	 */
+	public function assertCookieExists(string $name): void {
+		$this->test->assertArrayHasKey($name, $this->getResponseCookies(), "Expected the response to have the cookie \"{$name}\"");
 	}
 
 	/**
@@ -239,5 +254,15 @@ final class ResponseAssert {
 		$body = $this->response->getBody();
 		$body->rewind();
 		return $body->getContents();
+	}
+
+	private function getResponseCookies(): array {
+		$result = [];
+		$cookies = $this->response->getHeader('Set-Cookie');
+		foreach ($cookies as $value) {
+			[$k, $v] = explode('=', preg_split('/\\s*;\\s*/', $value, -1, PREG_SPLIT_NO_EMPTY)[0]);
+			$result[$k] = $v;
+		}
+		return $result;
 	}
 }
