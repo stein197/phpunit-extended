@@ -15,9 +15,27 @@ final class RequestAssertTest extends PHPUnitTestCase {
 	use TestCase;
 
 	#[Test]
-	#[DataProvider('data_assertStatus')]
+	#[DataProvider('dataAssertOk')]
+	#[TestDox('assertOk()')]
+	public function testAssertOk(?string $exceptionMessage, ResponseInterface $response): void {
+		if ($exceptionMessage) {
+			$this->expectException(ExpectationFailedException::class);
+			$this->expectExceptionMessage($exceptionMessage);
+		}
+		$this->response($response)->assertOk();
+	}
+
+	public static function dataAssertOk(): array {
+		return [
+			'passed' => [null, new Response(200)],
+			'failed' => ['Expected the response to have the status 200, actual: 500', new Response(500)],
+		];
+	}
+
+	#[Test]
+	#[DataProvider('dataAssertStatus')]
 	#[TestDox('assertStatus()')]
-	public function test_assertStatus(?string $exceptionMessage, ResponseInterface $response, int $expectedStatus): void {
+	public function testAssertStatus(?string $exceptionMessage, ResponseInterface $response, int $expectedStatus): void {
 		if ($exceptionMessage) {
 			$this->expectException(ExpectationFailedException::class);
 			$this->expectExceptionMessage($exceptionMessage);
@@ -25,7 +43,7 @@ final class RequestAssertTest extends PHPUnitTestCase {
 		$this->response($response)->assertStatus($expectedStatus);
 	}
 
-	public static function data_assertStatus(): array {
+	public static function dataAssertStatus(): array {
 		return [
 			'passed' => [null, new Response(200), 200],
 			'failed' => ['Expected the response to have the status 200, actual: 500', new Response(500), 200],

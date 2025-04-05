@@ -19,7 +19,6 @@ use Psr\Http\Message\ResponseInterface;
 // TODO: assertHeaderEquals
 // TODO: assertHeaderNotEquals
 // TODO: assertNotFound
-// TODO: assertOk
 // TODO: assertRedirect
 // TODO: ?assertDownload, assertFile etc.
 final class RequestAssert {
@@ -28,6 +27,15 @@ final class RequestAssert {
 		private TestCase $test,
 		private ResponseInterface $response
 	) {}
+
+	/**
+	 * Assert that the response status code equals to 200. The same as the `assertStatus(200)`.
+	 * @return void
+	 * @throws ExpectationFailedException If the response does not have the status code of 200.
+	 */
+	public function assertOk(): void {
+		$this->assertStatus(200);
+	}
 
 	/**
 	 * Assert that the response status code equals to the `$status`.
