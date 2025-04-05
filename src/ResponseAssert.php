@@ -8,7 +8,6 @@ use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ResponseInterface;
 use RuntimeException;
 
-// TODO: assertContentNotEquals
 // TODO: assertContentRegex
 // TODO: assertContentNotRegex
 // TODO: assertContentContains
@@ -35,10 +34,23 @@ final class ResponseAssert {
 	 * ```
 	 */
 	public function assertContentEquals(string $content): void {
-		$body = $this->response->getBody();
-		$body->rewind();
-		$actual = $body->getContents();
+		$actual = $this->getResponseContents();
 		$this->test->assertEquals($content, $actual, "Expected the response to have the content \"{$content}\", actual: \"{$actual}\"");
+	}
+
+	/**
+	 * Assert that the response content does not equal to the given content.
+	 * @param string $content Expected content.
+	 * @return void
+	 * @throws RuntimeException Error while reading body contents.
+	 * @throws ExpectationFailedException If the response content equals to the given one.
+	 * ```php
+	 * $this->assertContentNotEquals('Hello, World!');
+	 * ```
+	 */
+	public function assertContentNotEquals(string $content): void {
+		$actual = $this->getResponseContents();
+		$this->test->assertNotEquals($content, $actual, "Expected the response not to have the content \"{$content}\"");
 	}
 
 	/**
@@ -164,5 +176,11 @@ final class ResponseAssert {
 	public function assertStatus(int $status): void {
 		$actual = $this->response->getStatusCode();
 		$this->test->assertEquals($status, $actual, "Expected the response to have the status {$status}, actual: {$actual}");
+	}
+
+	private function getResponseContents(): string {
+		$body = $this->response->getBody();
+		$body->rewind();
+		return $body->getContents();
 	}
 }

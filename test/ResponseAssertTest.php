@@ -31,6 +31,23 @@ final class ResponseAssertTest extends PHPUnitTestCase {
 		];
 	}
 
+
+	#[Test]
+	#[DataProvider('dataAssertContentNotEquals')]
+	#[TestDox('assertContentNotEquals()')]
+	public function testAssertContentNotEquals(?string $exceptionMessage, ResponseInterface $response, string $expectedContent): void {
+		$this->assert($exceptionMessage, $response, static function (ResponseAssert $response) use ($expectedContent): void {
+			$response->assertContentNotEquals($expectedContent);
+		});
+	}
+
+	public static function dataAssertContentNotEquals(): array {
+		return [
+			'passed' => [null, new Response(200, []), 'Hello, World!'],
+			'failed' => ['Expected the response not to have the content "Hello, World!"', new Response(200, [], 'Hello, World!'), 'Hello, World!'],
+		];
+	}
+
 	#[Test]
 	#[DataProvider('dataAssertContentType')]
 	#[TestDox('assertContentType()')]
