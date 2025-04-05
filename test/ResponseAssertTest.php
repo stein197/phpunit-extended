@@ -195,6 +195,26 @@ final class ResponseAssertTest extends PHPUnitTestCase {
 	}
 
 	#[Test]
+	#[DataProvider('dataAssertDownload')]
+	#[TestDox('assertDownload()')]
+	public function testAssertDownload(?string $exceptionMessage, ResponseInterface $response, ?string $expectedName): void {
+		$this->assert($exceptionMessage, $response, static function (ResponseAssert $response) use ($expectedName): void {
+			$response->assertDownload($expectedName);
+		});
+	}
+
+	public static function dataAssertDownload(): array {
+		return [
+			'passed without name' => [null, new Response(200, ['Content-Disposition' => 'attachment']), null],
+			'passed with name' => [null, new Response(200, ['Content-Disposition' => 'attachment; name="file"; filename="file.txt"']), 'file.txt'],
+			'failed without header' => ['Expected the response to have the header "Content-Disposition"', new Response(200), null],
+			'failed with incorrect type' => ['Expected the response to have the Content-Disposition header to be attachment, actual: inline', new Response(200, ['Content-Disposition' => 'inline']), null],
+			'failed with incorrect name' => ['Expected the response to download a file "file", actual: "file.txt"', new Response(200, ['Content-Disposition' => 'attachment; filename="file.txt"']), 'file'],
+			'failed without name' => ['Expected the response to download a file "file"', new Response(200, ['Content-Disposition' => 'attachment; ']), 'file'],
+		];
+	}
+
+	#[Test]
 	#[DataProvider('dataAssertHeaderEquals')]
 	#[TestDox('assertHeaderEquals()')]
 	public function testAssertHeaderEquals(?string $exceptionMessage, ResponseInterface $response, string $expectedHeader, string $expectedValue): void {

@@ -9,9 +9,13 @@ use Psr\Http\Message\ResponseInterface;
 use RuntimeException;
 use function explode;
 use function preg_split;
+use function trim;
 use const PREG_SPLIT_NO_EMPTY;
 
-// TODO: ?assertDownload, assertFile etc.
+/**
+ * Response assertions.
+ * @package Stein197\PHPUnit
+ */
 final class ResponseAssert {
 
 	public function __construct(
@@ -175,6 +179,33 @@ final class ResponseAssert {
 	 */
 	public function assertCookieNotExists(string $name): void {
 		$this->test->assertArrayNotHasKey($name, $this->getResponseCookies(), "Expected the response not to have the cookie \"{$name}\"");
+	}
+
+	/**
+	 * Assert that the response is a download one.
+	 * @param null|string $name Optional filename to download.
+	 * @return void
+	 * @throws AssertionFailedError When there is no header Content-Disposition or the name does not equal to the given one.
+	 * ```php
+	 * $this->assertDownload('file.txt');
+	 * ```
+	 */
+	public function assertDownload(?string $name = null): void {
+		$this->assertHeaderExists('Content-Disposition');
+		$parts = preg_split('/\\s*;\\s*/', $this->response->getHeader('Content-Disposition')[0], -1, PREG_SPLIT_NO_EMPTY);
+		$type = $parts[0];
+		$this->test->assertEquals('attachment', $type, "Expected the response to have the Content-Disposition header to be attachment, actual: {$type}");
+		if (!$name)
+			return;
+		foreach ($parts as $part) {
+			$kv = explode('=', $part);
+			if ($kv[0] !== 'filename' || !isset($kv[1]))
+				continue;
+			$filename = trim($kv[1], '"');
+			$this->test->assertEquals($name, $filename, "Expected the response to download a file \"{$name}\", actual: \"{$filename}\"");
+			return;
+		}
+		$this->test->fail("Expected the response to download a file \"{$name}\"");
 	}
 
 	/**
