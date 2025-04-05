@@ -1,6 +1,7 @@
 <?php
 namespace Stein197\PHPUnit;
 
+use PHPUnit\Framework\AssertionFailedError;
 use PHPUnit\Framework\ExpectationFailedException;
 use PHPUnit\Framework\GeneratorNotSupportedException;
 use PHPUnit\Framework\TestCase;
@@ -15,7 +16,6 @@ use Psr\Http\Message\ResponseInterface;
 // TODO: assertCookieEquals
 // TODO: assertCookieExists
 // TODO: assertCookieNotExists
-// TODO: assertHeaderEquals
 // TODO: assertHeaderNotEquals
 // TODO: assertRedirect
 // TODO: ?assertDownload, assertFile etc.
@@ -25,6 +25,26 @@ final class ResponseAssert {
 		private TestCase $test,
 		private ResponseInterface $response
 	) {}
+
+	/**
+	 * Assert that the response has the given header with the given value.
+	 * @param string $header Expected header. The name can be case-insensetive.
+	 * @param string $value Expected value.
+	 * @return void
+	 * @throws ExpectationFailedException If the response does not have the given header with the given value.
+	 * @throws AssertionFailedError If the response does not have the given header with the given value.
+	 * ```php
+	 * $this->assertHeaderEquals('Content-Type', 'text/html');
+	 * ```
+	 */
+	public function assertHeaderEquals(string $header, string $value): void {
+		foreach ($this->response->getHeader($header) as $v)
+			if ($v === $value) {
+				$this->test->assertEquals($value, $v);
+				return;
+			}
+		$this->test->fail("Expected the response to have the header \"{$header}\" with value \"{$value}\"");
+	}
 
 	/**
 	 * Assert that the response has the given header.

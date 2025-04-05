@@ -2,10 +2,10 @@
 namespace Test;
 
 use Nyholm\Psr7\Response;
+use PHPUnit\Framework\AssertionFailedError;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\Attributes\TestDox;
-use PHPUnit\Framework\ExpectationFailedException;
 use PHPUnit\Framework\TestCase as PHPUnitTestCase;
 use Psr\Http\Message\ResponseInterface;
 use Stein197\PHPUnit\ResponseAssert;
@@ -14,6 +14,23 @@ use Stein197\PHPUnit\TestCase;
 final class ResponseAssertTest extends PHPUnitTestCase {
 
 	use TestCase;
+
+	#[Test]
+	#[DataProvider('dataAssertHeaderEquals')]
+	#[TestDox('assertHeaderEquals()')]
+	public function testAssertHeaderEquals(?string $exceptionMessage, ResponseInterface $response, string $expectedHeader, string $expectedValue): void {
+		$this->assert($exceptionMessage, $response, static function (ResponseAssert $response) use ($expectedHeader, $expectedValue): void {
+			$response->assertHeaderEquals($expectedHeader, $expectedValue);
+		});
+	}
+
+	public static function dataAssertHeaderEquals(): array {
+		return [
+			'case-sensetive' => [null, new Response(200, ['Content-Type' => ['text/html']]), 'Content-Type', 'text/html'],
+			'case-insensetive' => [null, new Response(200, ['Content-Type' => 'text/html']), 'content-type', 'text/html'],
+			'failed' => ['Expected the response to have the header "Content-Type"', new Response(200, ['Content-Type' => 'text/html']), 'Content-Type', 'text/plain'],
+		];
+	}
 
 	#[Test]
 	#[DataProvider('dataAssertHeaderExists')]
@@ -99,7 +116,8 @@ final class ResponseAssertTest extends PHPUnitTestCase {
 
 	private function assert(?string $exceptionMessage, ResponseInterface $response, callable $f): void {
 		if ($exceptionMessage) {
-			$this->expectException(ExpectationFailedException::class);
+			// $this->expectException(ExpectationFailedException::class);
+			$this->expectException(AssertionFailedError::class);
 			$this->expectExceptionMessage($exceptionMessage);
 		}
 		$f($this->response($response));
