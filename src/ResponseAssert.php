@@ -16,7 +16,6 @@ use Psr\Http\Message\ResponseInterface;
 // TODO: assertCookieEquals
 // TODO: assertCookieExists
 // TODO: assertCookieNotExists
-// TODO: assertHeaderNotEquals
 // TODO: assertRedirect
 // TODO: ?assertDownload, assertFile etc.
 final class ResponseAssert {
@@ -44,6 +43,21 @@ final class ResponseAssert {
 				return;
 			}
 		$this->test->fail("Expected the response to have the header \"{$header}\" with value \"{$value}\"");
+	}
+
+	/**
+	 * Assert that the response does not have the given header with the given value.
+	 * @param string $header Expected header. The name can be case-insensetive.
+	 * @param string $value Expected value.
+	 * @return void
+	 * @throws ExpectationFailedException If the response has the given header with the given value.
+	 * ```php
+	 * $this->assertHeaderNotEquals('Content-Type', 'text/html');
+	 * ```
+	 */
+	public function assertHeaderNotEquals(string $header, string $value): void {
+		foreach ($this->response->getHeader($header) as $v)
+			$this->test->assertNotEquals($value, $v, "Expected the response not to have the header \"{$header}\" with value \"{$value}\"");
 	}
 
 	/**
