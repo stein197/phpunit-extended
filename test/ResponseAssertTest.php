@@ -16,6 +16,22 @@ final class ResponseAssertTest extends PHPUnitTestCase {
 	use TestCase;
 
 	#[Test]
+	#[DataProvider('dataAssertNotFound')]
+	#[TestDox('assertNotFound()')]
+	public function testAssertNotFound(?string $exceptionMessage, ResponseInterface $response): void {
+		$this->assert($exceptionMessage, $response, static function (ResponseAssert $response): void {
+			$response->assertNotFound();
+		});
+	}
+
+	public static function dataAssertNotFound(): array {
+		return [
+			'passed' => [null, new Response(404)],
+			'failed' => ['Expected the response to have the status 404, actual: 500', new Response(500)],
+		];
+	}
+
+	#[Test]
 	#[DataProvider('dataAssertOk')]
 	#[TestDox('assertOk()')]
 	public function testAssertOk(?string $exceptionMessage, ResponseInterface $response): void {

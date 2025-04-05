@@ -18,7 +18,6 @@ use Psr\Http\Message\ResponseInterface;
 // TODO: assertHeaderNotExists
 // TODO: assertHeaderEquals
 // TODO: assertHeaderNotEquals
-// TODO: assertNotFound
 // TODO: assertRedirect
 // TODO: ?assertDownload, assertFile etc.
 final class ResponseAssert {
@@ -27,6 +26,15 @@ final class ResponseAssert {
 		private TestCase $test,
 		private ResponseInterface $response
 	) {}
+
+	/**
+	 * Assert that the response status code equals to 404. The same as the `assertStatus(404)`.
+	 * @return void
+	 * @throws ExpectationFailedException If the response does not have the status code of 404.
+	 */
+	public function assertNotFound(): void {
+		$this->assertStatus(404);
+	}
 
 	/**
 	 * Assert that the response status code equals to 200. The same as the `assertStatus(200)`.
