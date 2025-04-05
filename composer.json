@@ -1,0 +1,24 @@
+{
+    "name": "stein197/phpunit-extended",
+    "description": "Extended PHPUnit assertions",
+    "type": "library",
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "Stein197\\PHPUnit\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Test\\": "test/"
+        }
+    },
+    "require": {
+        "php": ">=8.4",
+        "phpunit/phpunit": "^10 || ^11 || ^12",
+        "psr/http-message": "^2.0"
+    },
+    "require-dev": {
+        "nyholm/psr7": "^1.8"
+    }
+}
