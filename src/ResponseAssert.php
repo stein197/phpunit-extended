@@ -8,7 +8,6 @@ use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ResponseInterface;
 use RuntimeException;
 
-// TODO: assertContentNotContains
 // TODO: assertContentRegex
 // TODO: assertContentNotRegex
 // TODO: assertCookieEquals
@@ -36,6 +35,21 @@ final class ResponseAssert {
 	public function assertContentContains(string $content): void {
 		$actual = $this->getResponseContents();
 		$this->test->assertStringContainsString($content, $actual, "Expected the response to contain the content \"{$content}\", actual: \"{$actual}\"");
+	}
+
+	/**
+	 * Assert that the response content does not contain the given content.
+	 * @param string $content Expected content.
+	 * @return void
+	 * @throws RuntimeException Error while reading body contents.
+	 * @throws ExpectationFailedException If the response content contains the given one.
+	 * ```php
+	 * $this->assertContentNotContains('Hello, World!');
+	 * ```
+	 */
+	public function assertContentNotContains(string $content): void {
+		$actual = $this->getResponseContents();
+		$this->test->assertStringNotContainsString($content, $actual, "Expected the response not to contain the content \"{$content}\", actual: \"{$actual}\"");
 	}
 
 	/**
