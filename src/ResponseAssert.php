@@ -8,7 +8,6 @@ use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ResponseInterface;
 use RuntimeException;
 
-// TODO: assertContentNotRegex
 // TODO: assertCookieEquals
 // TODO: assertCookieNotEquals
 // TODO: assertCookieExists
@@ -94,6 +93,21 @@ final class ResponseAssert {
 	public function assertContentRegex(string $regex): void {
 		$content = $this->getResponseContents();
 		$this->test->assertMatchesRegularExpression($regex, $content, "Expected the response to match the regular expression \"{$regex}\", actual: \"{$content}\"");
+	}
+
+	/**
+	 * Assert that the response content does not match the given regular expression.
+	 * @param string $regex Regular expression to match against.
+	 * @return void
+	 * @throws RuntimeException Error while reading body contents.
+	 * @throws ExpectationFailedException If the response content matches the given regular expression.
+	 * ```php
+	 * $this->assertContentNotRegex('/hello/i');
+	 * ```
+	 */
+	public function assertContentNotRegex(string $regex): void {
+		$content = $this->getResponseContents();
+		$this->test->assertDoesNotMatchRegularExpression($regex, $content, "Expected the response not to match the regular expression \"{$regex}\", actual: \"{$content}\"");
 	}
 
 	/**
