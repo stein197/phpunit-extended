@@ -8,6 +8,7 @@ use PHPUnit\Framework\Attributes\TestDox;
 use PHPUnit\Framework\ExpectationFailedException;
 use PHPUnit\Framework\TestCase as PHPUnitTestCase;
 use Psr\Http\Message\ResponseInterface;
+use Stein197\PHPUnit\ResponseAssert;
 use Stein197\PHPUnit\TestCase;
 
 final class ResponseAssertTest extends PHPUnitTestCase {
@@ -18,11 +19,9 @@ final class ResponseAssertTest extends PHPUnitTestCase {
 	#[DataProvider('dataAssertOk')]
 	#[TestDox('assertOk()')]
 	public function testAssertOk(?string $exceptionMessage, ResponseInterface $response): void {
-		if ($exceptionMessage) {
-			$this->expectException(ExpectationFailedException::class);
-			$this->expectExceptionMessage($exceptionMessage);
-		}
-		$this->response($response)->assertOk();
+		$this->assert($exceptionMessage, $response, static function (ResponseAssert $response): void {
+			$response->assertOk();
+		});
 	}
 
 	public static function dataAssertOk(): array {
@@ -36,11 +35,9 @@ final class ResponseAssertTest extends PHPUnitTestCase {
 	#[DataProvider('dataAssertStatus')]
 	#[TestDox('assertStatus()')]
 	public function testAssertStatus(?string $exceptionMessage, ResponseInterface $response, int $expectedStatus): void {
-		if ($exceptionMessage) {
-			$this->expectException(ExpectationFailedException::class);
-			$this->expectExceptionMessage($exceptionMessage);
-		}
-		$this->response($response)->assertStatus($expectedStatus);
+		$this->assert($exceptionMessage, $response, static function (ResponseAssert $response) use ($expectedStatus): void {
+			$response->assertStatus($expectedStatus);
+		});
 	}
 
 	public static function dataAssertStatus(): array {
@@ -48,5 +45,13 @@ final class ResponseAssertTest extends PHPUnitTestCase {
 			'passed' => [null, new Response(200), 200],
 			'failed' => ['Expected the response to have the status 200, actual: 500', new Response(500), 200],
 		];
+	}
+
+	private function assert(?string $exceptionMessage, ResponseInterface $response, callable $f): void {
+		if ($exceptionMessage) {
+			$this->expectException(ExpectationFailedException::class);
+			$this->expectExceptionMessage($exceptionMessage);
+		}
+		$f($this->response($response));
 	}
 }
