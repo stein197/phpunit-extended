@@ -15,7 +15,6 @@ use Psr\Http\Message\ResponseInterface;
 // TODO: assertCookieEquals
 // TODO: assertCookieExists
 // TODO: assertCookieNotExists
-// TODO: assertHeaderNotExists
 // TODO: assertHeaderEquals
 // TODO: assertHeaderNotEquals
 // TODO: assertRedirect
@@ -39,6 +38,20 @@ final class ResponseAssert {
 	 */
 	public function assertHeaderExists(string $header): void {
 		$this->test->assertNotEmpty($this->response->getHeader($header), "Expected the response to have the header \"{$header}\"");
+	}
+
+	/**
+	 * Assert that the response does not have the given header.
+	 * @param string $header Expected header. The name can be case-insensetive.
+	 * @return void
+	 * @throws ExpectationFailedException If the response has the given header.
+	 * @throws GeneratorNotSupportedException
+	 * ```php
+	 * $this->assertHeaderNotExists('Content-Type');
+	 * ```
+	 */
+	public function assertHeaderNotExists(string $header): void {
+		$this->test->assertEmpty($this->response->getHeader($header), "Expected the response not to have the header \"{$header}\"");
 	}
 
 	/**
