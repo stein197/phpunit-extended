@@ -16,6 +16,22 @@ final class ResponseAssertTest extends PHPUnitTestCase {
 	use TestCase;
 
 	#[Test]
+	#[DataProvider('dataAssertContentType')]
+	#[TestDox('assertContentType()')]
+	public function testAssertContentType(?string $exceptionMessage, ResponseInterface $response, string $expectedContentType): void {
+		$this->assert($exceptionMessage, $response, static function (ResponseAssert $response) use ($expectedContentType): void {
+			$response->assertContentType($expectedContentType);
+		});
+	}
+
+	public static function dataAssertContentType(): array {
+		return [
+			'passed' => [null, new Response(200, ['Content-Type' => 'text/html']), 'text/html'],
+			'failed' => ['Expected the response to have the header "Content-Type" with value "text/html"', new Response(200), 'text/html'],
+		];
+	}
+
+	#[Test]
 	#[DataProvider('dataAssertHeaderEquals')]
 	#[TestDox('assertHeaderEquals()')]
 	public function testAssertHeaderEquals(?string $exceptionMessage, ResponseInterface $response, string $expectedHeader, string $expectedValue): void {

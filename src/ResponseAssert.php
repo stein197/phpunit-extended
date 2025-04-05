@@ -25,6 +25,20 @@ final class ResponseAssert {
 	) {}
 
 	/**
+	 * Assert that the response the given content-type header.
+	 * @param string $contentType Expected content-type.
+	 * @return void
+	 * @throws ExpectationFailedException If the response does not have the given content-type header.
+	 * @throws AssertionFailedError If the response does not have the given content-type header.
+	 * ```php
+	 * $this->assertContentType('text/html');
+	 * ```
+	 */
+	public function assertContentType(string $contentType): void {
+		$this->assertHeaderEquals('Content-Type', $contentType);
+	}
+
+	/**
 	 * Assert that the response has the given header with the given value.
 	 * @param string $header Expected header. The name can be case-insensetive.
 	 * @param string $value Expected value.
