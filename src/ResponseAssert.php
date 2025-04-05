@@ -13,7 +13,6 @@ use const PREG_SPLIT_NO_EMPTY;
 
 // TODO: assertCookieEquals
 // TODO: assertCookieNotEquals
-// TODO: assertCookieNotExists
 // TODO: ?assertDownload, assertFile etc.
 final class ResponseAssert {
 
@@ -137,6 +136,19 @@ final class ResponseAssert {
 	 */
 	public function assertCookieExists(string $name): void {
 		$this->test->assertArrayHasKey($name, $this->getResponseCookies(), "Expected the response to have the cookie \"{$name}\"");
+	}
+
+	/**
+	 * Assert that the response does not have the given cookie.
+	 * @param string $name Cookie name.
+	 * @return void
+	 * @throws ExpectationFailedException If the response has a cookie with the given name.
+	 * ```php
+	 * $this->assertCookieNotExists('ga');
+	 * ```
+	 */
+	public function assertCookieNotExists(string $name): void {
+		$this->test->assertArrayNotHasKey($name, $this->getResponseCookies(), "Expected the response not to have the cookie \"{$name}\"");
 	}
 
 	/**
