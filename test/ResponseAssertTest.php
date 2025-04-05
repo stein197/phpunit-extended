@@ -81,6 +81,22 @@ final class ResponseAssertTest extends PHPUnitTestCase {
 	}
 
 	#[Test]
+	#[DataProvider('dataAssertContentRegex')]
+	#[TestDox('assertContentRegex()')]
+	public function testAssertContentRegex(?string $exceptionMessage, ResponseInterface $response, string $regex): void {
+		$this->assert($exceptionMessage, $response, static function (ResponseAssert $response) use ($regex): void {
+			$response->assertContentRegex($regex);
+		});
+	}
+
+	public static function dataAssertContentRegex(): array {
+		return [
+			'passed' => [null, new Response(200, [], 'Hello, World!'), '/hello/i'],
+			'failed' => ['Expected the response to match the regular expression "/hello/i"', new Response(200, []), '/hello/i'],
+		];
+	}
+
+	#[Test]
 	#[DataProvider('dataAssertContentType')]
 	#[TestDox('assertContentType()')]
 	public function testAssertContentType(?string $exceptionMessage, ResponseInterface $response, string $expectedContentType): void {
