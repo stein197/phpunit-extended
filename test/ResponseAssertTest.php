@@ -146,6 +146,23 @@ final class ResponseAssertTest extends PHPUnitTestCase {
 	}
 
 	#[Test]
+	#[DataProvider('dataAssertCookieNotEquals')]
+	#[TestDox('assertCookieNotEquals()')]
+	public function testAssertCookieNotEquals(?string $exceptionMessage, ResponseInterface $response, string $expectedName, string $expectedValue): void {
+		$this->assert($exceptionMessage, $response, static function (ResponseAssert $response) use ($expectedName, $expectedValue): void {
+			$response->assertCookieNotEquals($expectedName, $expectedValue);
+		});
+	}
+
+	public static function dataAssertCookieNotEquals(): array {
+		return [
+			'cookie not exists' => [null, new Response(200), 'key', 'value'],
+			'value not matches' => [null, new Response(200, ['Set-Cookie' => ['key=value2']]), 'key', 'value'],
+			'failed' => ['Expected the response not to have the cookie "key" with the value "value"', new Response(200, ['Set-Cookie' => ['key=value']]), 'key', 'value'],
+		];
+	}
+
+	#[Test]
 	#[DataProvider('dataAssertCookieExists')]
 	#[TestDox('assertCookieExists()')]
 	public function testAssertCookieExists(?string $exceptionMessage, ResponseInterface $response, string $expectedName): void {

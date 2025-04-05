@@ -11,7 +11,6 @@ use function explode;
 use function preg_split;
 use const PREG_SPLIT_NO_EMPTY;
 
-// TODO: assertCookieNotEquals
 // TODO: ?assertDownload, assertFile etc.
 final class ResponseAssert {
 
@@ -131,11 +130,25 @@ final class ResponseAssert {
 	 * @return void
 	 * @throws ExpectationFailedException If the response does not have a cookie with the given name and value.
 	 * ```php
-	 * $this->assertCookieEquals('ga');
+	 * $this->assertCookieEquals('ga', 'XXX');
 	 * ```
 	 */
 	public function assertCookieEquals(string $name, string $value): void {
 		$this->test->assertEquals($value, @$this->getResponseCookies()[$name], "Expected the response to have the cookie \"{$name}\" with the value \"{$value}\"");
+	}
+
+	/**
+	 * Assert that the response does not have the given cookie with the given value.
+	 * @param string $name Cookie name.
+	 * @param string $value Expected cookie value.
+	 * @return void
+	 * @throws ExpectationFailedException If the response has a cookie with the given name and value.
+	 * ```php
+	 * $this->assertCookieNotEquals('ga', 'XXX');
+	 * ```
+	 */
+	public function assertCookieNotEquals(string $name, string $value): void {
+		$this->test->assertNotEquals($value, @$this->getResponseCookies()[$name], "Expected the response not to have the cookie \"{$name}\" with the value \"{$value}\"");
 	}
 
 	/**
