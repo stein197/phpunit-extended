@@ -16,7 +16,6 @@ use Psr\Http\Message\ResponseInterface;
 // TODO: assertCookieEquals
 // TODO: assertCookieExists
 // TODO: assertCookieNotExists
-// TODO: assertRedirect
 // TODO: ?assertDownload, assertFile etc.
 final class ResponseAssert {
 
@@ -104,6 +103,22 @@ final class ResponseAssert {
 	 */
 	public function assertOk(): void {
 		$this->assertStatus(200);
+	}
+
+	/**
+	 * Assert that the response status code is between 300 and 400 (or is 201) and the response has the location header.
+	 * @param string $url Expected redirection URL.
+	 * @return void
+	 * @throws ExpectationFailedException If the response does not have the location header or if the response status is not between 300 and 400 (or is not 201).
+	 * @throws AssertionFailedError If the response does not have the location header or if the response status is not between 300 and 400 (or is not 201).
+	 * ```php
+	 * $this->assertRedirect('/redirecting-url');
+	 * ```
+	 */
+	public function assertRedirect(string $url): void {
+		$status = $this->response->getStatusCode();
+		$this->test->assertTrue($status === 201 || 300 <= $status && $status < 400, "Expected the response to have the status 201 or 3xx, actual: {$status}");
+		$this->assertHeaderEquals('Location', $url);
 	}
 
 	/**

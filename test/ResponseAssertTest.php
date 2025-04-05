@@ -117,6 +117,25 @@ final class ResponseAssertTest extends PHPUnitTestCase {
 	}
 
 	#[Test]
+	#[DataProvider('dataAssertRedirect')]
+	#[TestDox('assertRedirect()')]
+	public function testAssertRedirect(?string $exceptionMessage, ResponseInterface $response, string $expectedUrl): void {
+		$this->assert($exceptionMessage, $response, static function (ResponseAssert $response) use ($expectedUrl): void {
+			$response->assertRedirect($expectedUrl);
+		});
+	}
+
+	public static function dataAssertRedirect(): array {
+		return [
+			'status is 201' => [null, new Response(201, ['Location' => '/url']), '/url'],
+			'status is 3xx' => [null, new Response(302, ['Location' => '/url']), '/url'],
+			'no location' => ['Expected the response to have the header "Location" with value "/url"', new Response(302), '/url'],
+			'status is not 201 or 3xx' => ['Expected the response to have the status 201 or 3xx, actual: 200', new Response(200, ['Location' => '/url']), '/url'],
+		];
+	}
+
+
+	#[Test]
 	#[DataProvider('dataAssertStatus')]
 	#[TestDox('assertStatus()')]
 	public function testAssertStatus(?string $exceptionMessage, ResponseInterface $response, int $expectedStatus): void {
