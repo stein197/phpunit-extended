@@ -6,8 +6,8 @@ use PHPUnit\Framework\ExpectationFailedException;
 use PHPUnit\Framework\GeneratorNotSupportedException;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ResponseInterface;
+use RuntimeException;
 
-// TODO: assertContentEquals
 // TODO: assertContentNotEquals
 // TODO: assertContentRegex
 // TODO: assertContentNotRegex
@@ -23,6 +23,23 @@ final class ResponseAssert {
 		private TestCase $test,
 		private ResponseInterface $response
 	) {}
+
+	/**
+	 * Assert that the response content equals to the given content.
+	 * @param string $content Expected content.
+	 * @return void
+	 * @throws RuntimeException Error while reading body contents.
+	 * @throws ExpectationFailedException If the response content does not equal to the given one.
+	 * ```php
+	 * $this->assertContentEquals('Hello, World!');
+	 * ```
+	 */
+	public function assertContentEquals(string $content): void {
+		$body = $this->response->getBody();
+		$body->rewind();
+		$actual = $body->getContents();
+		$this->test->assertEquals($content, $actual, "Expected the response to have the content \"{$content}\", actual: \"{$actual}\"");
+	}
 
 	/**
 	 * Assert that the response the given content-type header.
