@@ -2,6 +2,7 @@
 namespace Stein197\PHPUnit;
 
 use PHPUnit\Framework\ExpectationFailedException;
+use PHPUnit\Framework\GeneratorNotSupportedException;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ResponseInterface;
 
@@ -14,7 +15,6 @@ use Psr\Http\Message\ResponseInterface;
 // TODO: assertCookieEquals
 // TODO: assertCookieExists
 // TODO: assertCookieNotExists
-// TODO: assertHeaderExists
 // TODO: assertHeaderNotExists
 // TODO: assertHeaderEquals
 // TODO: assertHeaderNotEquals
@@ -26,6 +26,20 @@ final class ResponseAssert {
 		private TestCase $test,
 		private ResponseInterface $response
 	) {}
+
+	/**
+	 * Assert that the response has the given header.
+	 * @param string $header Expected header. The name can be case-insensetive.
+	 * @return void
+	 * @throws ExpectationFailedException If the response does not have the given header.
+	 * @throws GeneratorNotSupportedException
+	 * ```php
+	 * $this->assertHeaderExists('Content-Type');
+	 * ```
+	 */
+	public function assertHeaderExists(string $header): void {
+		$this->test->assertNotEmpty($this->response->getHeader($header), "Expected the response to have the header \"{$header}\"");
+	}
 
 	/**
 	 * Assert that the response status code equals to 404. The same as the `assertStatus(404)`.

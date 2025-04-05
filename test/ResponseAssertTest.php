@@ -16,6 +16,23 @@ final class ResponseAssertTest extends PHPUnitTestCase {
 	use TestCase;
 
 	#[Test]
+	#[DataProvider('dataAssertHeaderExists')]
+	#[TestDox('assertHeaderExists()')]
+	public function testAssertHeaderExists(?string $exceptionMessage, ResponseInterface $response, string $expectedHeader): void {
+		$this->assert($exceptionMessage, $response, static function (ResponseAssert $response) use ($expectedHeader): void {
+			$response->assertHeaderExists($expectedHeader);
+		});
+	}
+
+	public static function dataAssertHeaderExists(): array {
+		return [
+			'case-sensetive' => [null, new Response(200, ['Content-Type' => 'text/html']), 'Content-Type'],
+			'case-insensetive' => [null, new Response(200, ['Content-Type' => 'text/html']), 'content-type'],
+			'failed' => ['Expected the response to have the header "Content-Type"', new Response(200, []), 'Content-Type'],
+		];
+	}
+
+	#[Test]
 	#[DataProvider('dataAssertNotFound')]
 	#[TestDox('assertNotFound()')]
 	public function testAssertNotFound(?string $exceptionMessage, ResponseInterface $response): void {
