@@ -21,7 +21,7 @@ use Psr\Http\Message\ResponseInterface;
 // TODO: assertNotFound
 // TODO: assertRedirect
 // TODO: ?assertDownload, assertFile etc.
-final class RequestAssert {
+final class ResponseAssert {
 
 	public function __construct(
 		private TestCase $test,

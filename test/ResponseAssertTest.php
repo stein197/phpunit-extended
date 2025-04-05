@@ -10,7 +10,7 @@ use PHPUnit\Framework\TestCase as PHPUnitTestCase;
 use Psr\Http\Message\ResponseInterface;
 use Stein197\PHPUnit\TestCase;
 
-final class RequestAssertTest extends PHPUnitTestCase {
+final class ResponseAssertTest extends PHPUnitTestCase {
 
 	use TestCase;
 

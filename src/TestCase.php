@@ -11,12 +11,12 @@ trait TestCase {
 	/**
 	 * Return an assertion object to test response objects.
 	 * @param ResponseInterface $response PSR-7 response object.
-	 * @return RequestAssert Assertion object.
+	 * @return ResponseAssert Assertion object.
 	 * ```php
 	 * $this->request(new Response(...))->assertStatus(200);
 	 * ```
 	 */
-	public function response(ResponseInterface $response): RequestAssert {
-		return new RequestAssert($this, $response);
+	public function response(ResponseInterface $response): ResponseAssert {
+		return new ResponseAssert($this, $response);
 	}
 }
