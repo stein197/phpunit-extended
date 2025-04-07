@@ -8,10 +8,11 @@ use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\Attributes\TestDox;
 use PHPUnit\Framework\TestCase as PHPUnitTestCase;
 use Psr\Http\Message\ResponseInterface;
+use Stein197\PHPUnit\ExtendedTestCase;
 use Stein197\PHPUnit\ResponseAssert;
 use Stein197\PHPUnit\TestCase;
 
-final class ResponseAssertTest extends PHPUnitTestCase {
+final class ResponseAssertTest extends PHPUnitTestCase implements ExtendedTestCase {
 
 	use TestCase;
 
@@ -349,6 +350,26 @@ final class ResponseAssertTest extends PHPUnitTestCase {
 			'failed' => ['Expected the response to have the status 200, actual: 500', new Response(500), 200],
 		];
 	}
+
+	#[Test]
+	#[DataProvider('dataXpath')]
+	#[TestDox('xpath()')]
+	public function testXpath(?string $exceptionMessage, ResponseInterface $response, string $xpath): void {
+		$this->assert($exceptionMessage, $response, static function (ResponseAssert $response) use ($xpath): void {
+			$response->xpath()->assertExists($xpath);
+		});
+	}
+
+	public static function dataXpath(): array {
+		return [
+			'HTML passed' => [null, new Response(200, ['Content-Type' => 'text/html'], '<!DOCTYPE html><body><p></p></body>'), '//body/p'],
+			'HTML failed' => ['Expected to find at least one element matching the xpath "//body/p"', new Response(200, ['Content-Type' => 'text/html'], '<!DOCTYPE html><body></body>'), '//body/p'],
+			'XML passed' => [null, new Response(200, ['Content-Type' => 'text/xml'], '<body><p></p></body>'), '//body/p'],
+			'XML failed' => ['Expected to find at least one element matching the xpath "//body/p"', new Response(200, ['Content-Type' => 'text/xml'], '<body></body>'), '//body/p'],
+			'invalid format' => ['Expected the response to have content-type of either "text/html" or "text/xml", actual: "text/plain"', new Response(200, ['Content-Type' => 'text/plain'], '<body><p></p></body>'), '//body/p'],
+		];
+	}
+
 
 	private function assert(?string $exceptionMessage, ResponseInterface $response, callable $f): void {
 		if ($exceptionMessage) {

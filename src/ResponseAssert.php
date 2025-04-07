@@ -18,8 +18,10 @@ use const PREG_SPLIT_NO_EMPTY;
  */
 final class ResponseAssert {
 
+	private ?XPathAssert $xpath = null;
+
 	public function __construct(
-		private TestCase $test,
+		private TestCase & ExtendedTestCase $test,
 		private ResponseInterface $response
 	) {}
 
@@ -317,6 +319,26 @@ final class ResponseAssert {
 	public function assertStatus(int $status): void {
 		$actual = $this->response->getStatusCode();
 		$this->test->assertEquals($status, $actual, "Expected the response to have the status {$status}, actual: {$actual}");
+	}
+
+	/**
+	 * Return an xpath assertion object containing the response content.
+	 * @return XPathAssert Xpath assertion object.
+	 * @throws RuntimeException
+	 * @throws AssertionFailedError If the Content-Type header is not `text/html` nor `text/xml`.
+	 * ```php
+	 * $this->xpath()->assertExists('//p');
+	 * ```
+	 */
+	public function xpath(): XPathAssert {
+		if ($this->xpath)
+			return $this->xpath;
+		$contentType = @$this->response->getHeader('Content-Type')[0];
+		if ($contentType === 'text/html')
+			return $this->xpath = $this->test->xpathHtml($this->getResponseContents());
+		if ($contentType === 'text/xml')
+			return $this->xpath = $this->test->xpathXml($this->getResponseContents());
+		$this->test->fail("Expected the response to have content-type of either \"text/html\" or \"text/xml\", actual: \"{$contentType}\"");
 	}
 
 	private function getResponseContents(): string {
