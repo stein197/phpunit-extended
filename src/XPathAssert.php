@@ -2,12 +2,17 @@
 namespace Stein197\PHPUnit;
 
 use Dom\Document;
+use Dom\Node;
 use Dom\XPath;
+use PHPUnit\Framework\AssertionFailedError;
 use PHPUnit\Framework\ExpectationFailedException;
 use PHPUnit\Framework\TestCase;
+use function array_map;
 
-// TODO: assertContentExists(string $xpath, string $content)
-// TODO: assertContentNotExists(string $xpath, string $content)
+// TODO: assertChildrenCount(string $xpath, int $count)
+// TODO: assertEmpty(string $xpath)
+// TODO: assertNotEmpty(string $xpath)
+// TODO: assertTextNotEquals(string $xpath, string $content)
 // TODO: assertContains(string $xpath, string $content)
 // TODO: assertNotContains(string $xpath, string $content)
 // TODO: assertRegexExists(string $xpath, string $regex)
@@ -67,5 +72,24 @@ final class XPathAssert {
 	 */
 	public function assertNotExists(string $xpath): void {
 		$this->assertCount($xpath, 0);
+	}
+
+	/**
+	 * Assert that at least one element by the given xpath has the given text.
+	 * @param string $xpath XPath to find elements by.
+	 * @param string $text Text to expect.
+	 * @return void
+	 * @throws ExpectationFailedException
+	 * @throws AssertionFailedError If there are no elements that contain the given text.
+	 * ```php
+	 * $this->assertTextEquals('//p', 'Hello, World!');
+	 * ```
+	 */
+	public function assertTextEquals(string $xpath, string $text): void {
+		$contents = array_map(
+			fn (Node $node) => $node->textContent,
+			[...$this->xpath->query($xpath)]
+		);
+		$this->test->assertContains($text, $contents, "Expected to find at least one element matching the xpath \"{$xpath}\" and containing the text \"{$text}\"");
 	}
 }
