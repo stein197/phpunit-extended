@@ -75,6 +75,26 @@ final class XPathAssertTest extends PHPUnitTestCase implements ExtendedTestCase 
 	}
 
 	#[Test]
+	#[DataProvider('dataAssertNotEmpty')]
+	#[TestDox('assertNotEmpty()')]
+	public function testAssertNotEmpty(?string $exceptionMessage, string $format, string $content, string $xpath): void {
+		$this->assert($exceptionMessage, $format, $content, static function (XPathAssert $assert) use ($xpath): void {
+			$assert->assertNotEmpty($xpath);
+		});
+	}
+
+	public static function dataAssertNotEmpty(): array {
+		return [
+			'HTML passed' => [null, 'html', '<!DOCTYPE html><body><p></p></body>', '//body'],
+			'HTML failed' => ['Expected to find at least one child element matching the xpath "//body"', 'html', '<!DOCTYPE html><body></body>', '//body'],
+			'HTML failed when xpath not exists' => ['Expected to find at least one element matching the xpath "//p"', 'html', '<!DOCTYPE html><body></body>', '//p'],
+			'XML passed' => [null, 'xml', '<body><p></p></body>', '//body'],
+			'XML failed' => ['Expected to find at least one child element matching the xpath "//body"', 'xml', '<body></body>', '//body'],
+			'XML failed when xpath not exists' => ['Expected to find at least one element matching the xpath "//p"', 'xml', '<body></body>', '//p'],
+		];
+	}
+
+	#[Test]
 	#[DataProvider('dataAssertExists')]
 	#[TestDox('assertExists()')]
 	public function testAssertExists(?string $exceptionMessage, string $format, string $content, string $xpath): void {

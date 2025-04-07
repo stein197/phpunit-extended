@@ -10,7 +10,6 @@ use PHPUnit\Framework\TestCase;
 use function array_map;
 use function array_reduce;
 
-// TODO: assertNotEmpty(string $xpath)
 // TODO: assertTextNotEquals(string $xpath, string $content)
 // TODO: assertContains(string $xpath, string $content)
 // TODO: assertNotContains(string $xpath, string $content)
@@ -43,17 +42,7 @@ final class XPathAssert {
 	 * ```
 	 */
 	public function assertChildrenCount(string $xpath, int $count): void {
-		$elements = $this->xpath->query($xpath);
-		if (!$elements->count())
-			$this->test->fail("Expected to find at least one element matching the xpath \"{$xpath}\"");
-		$actual = array_reduce(
-			array_map(
-				fn (Node $node): int => $node->childNodes->count(),
-				[...$elements]
-			),
-			fn (int $prev, int $cur): int => $prev + $cur,
-			0
-		);
+		$actual = $this->getChildrenCount($xpath);
 		$this->test->assertEquals($count, $actual, "Expected to find {$count} child elements for the xpath \"{$xpath}\", actual: {$actual}");
 	}
 
@@ -84,6 +73,21 @@ final class XPathAssert {
 	 */
 	public function assertEmpty(string $xpath): void {
 		$this->assertChildrenCount($xpath, 0);
+	}
+
+	/**
+	 * Assert that the given xpath has at least one child.
+	 * @param string $xpath Xpath to find elements by.
+	 * @return void
+	 * @throws AssertionFailedError When there are no elements matching the given xpath.
+	 * @throws ExpectationFailedException When the given xpath has no child elements.
+	 * ```php
+	 * $this->assertNotEmpty('//p');
+	 * ```
+	 */
+	public function assertNotEmpty(string $xpath): void {
+		$actual = $this->getChildrenCount($xpath);
+		$this->test->assertGreaterThan(0, $actual, "Expected to find at least one child element matching the xpath \"{$xpath}\"");
 	}
 
 	/**
@@ -130,5 +134,19 @@ final class XPathAssert {
 			[...$this->xpath->query($xpath)]
 		);
 		$this->test->assertContains($text, $contents, "Expected to find at least one element matching the xpath \"{$xpath}\" and containing the text \"{$text}\"");
+	}
+
+	private function getChildrenCount(string $xpath): int {
+		$elements = $this->xpath->query($xpath);
+		if (!$elements->count())
+			$this->test->fail("Expected to find at least one element matching the xpath \"{$xpath}\"");
+		return array_reduce(
+			array_map(
+				fn (Node $node): int => $node->childNodes->count(),
+				[...$elements]
+			),
+			fn (int $prev, int $cur): int => $prev + $cur,
+			0
+		);
 	}
 }
