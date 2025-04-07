@@ -8,8 +8,8 @@ use PHPUnit\Framework\AssertionFailedError;
 use PHPUnit\Framework\ExpectationFailedException;
 use PHPUnit\Framework\TestCase;
 use function array_map;
+use function array_reduce;
 
-// TODO: assertChildrenCount(string $xpath, int $count)
 // TODO: assertEmpty(string $xpath)
 // TODO: assertNotEmpty(string $xpath)
 // TODO: assertTextNotEquals(string $xpath, string $content)
@@ -30,6 +30,32 @@ final class XPathAssert {
 		Document $doc
 	) {
 		$this->xpath = new XPath($doc);
+	}
+
+	/**
+	 * Assert that the given xpath has `$count` children elements.
+	 * @param string $xpath Xpath to find elements by.
+	 * @param int $count Children count to expect.
+	 * @return void
+	 * @throws AssertionFailedError When there are no elements matching the given xpath.
+	 * @throws ExpectationFailedException When the expected amount of children does not match the expected one.
+	 * ```php
+	 * $this->assertChildrenCount('//p', 1);
+	 * ```
+	 */
+	public function assertChildrenCount(string $xpath, int $count): void {
+		$elements = $this->xpath->query($xpath);
+		if (!$elements->count())
+			$this->test->fail("Expected to find at least one element matching the xpath \"{$xpath}\"");
+		$actual = array_reduce(
+			array_map(
+				fn (Node $node): int => $node->childNodes->count(),
+				[...$elements]
+			),
+			fn (int $prev, int $cur): int => $prev + $cur,
+			0
+		);
+		$this->test->assertEquals($count, $actual, "Expected to find {$count} children elements for the xpath \"{$xpath}\", actual: {$actual}");
 	}
 
 	/**

@@ -15,6 +15,28 @@ final class XPathAssertTest extends PHPUnitTestCase implements ExtendedTestCase 
 	use TestCase;
 
 	#[Test]
+	#[DataProvider('dataAssertChildrenCount')]
+	#[TestDox('assertChildrenCount()')]
+	public function testAssertChildrenCount(?string $exceptionMessage, string $format, string $content, string $xpath, int $expectedCount): void {
+		$this->assert($exceptionMessage, $format, $content, static function (XPathAssert $assert) use ($xpath, $expectedCount): void {
+			$assert->assertChildrenCount($xpath, $expectedCount);
+		});
+	}
+
+	public static function dataAssertChildrenCount(): array {
+		return [
+			'HTML when xpath exists and there are children' => [null, 'html', '<!DOCTYPE html><body><p></p></body>', '//body', 1],
+			'HTML when xpath exists and there are children with text' => [null, 'html', '<!DOCTYPE html><body>text<p></p></body>', '//body', 2],
+			'HTML when xpath exists and children mismatch' => ['Expected to find 1 children elements for the xpath "//body", actual: 0', 'html', '<!DOCTYPE html><body></body>', '//body', 1],
+			'HTML when xpath not exists' => ['Expected to find at least one element matching the xpath "//p"', 'html', '<!DOCTYPE html><body></body>', '//p', 1],
+			'XML when xpath exists and there are children' => [null, 'xml', '<body><p></p></body>', '//body', 1],
+			'XML when xpath exists and there are children with text' => [null, 'xml', '<body>text<p></p></body>', '//body', 2],
+			'XML when xpath exists and children mismatch' => ['Expected to find 1 children elements for the xpath "//body", actual: 0', 'xml', '<body></body>', '//body', 1],
+			'XML when xpath not exists' => ['Expected to find at least one element matching the xpath "//p"', 'xml', '<body></body>', '//p', 1],
+		];
+	}
+
+	#[Test]
 	#[DataProvider('dataAssertCount')]
 	#[TestDox('assertCount()')]
 	public function testAssertCount(?string $exceptionMessage, string $format, string $content, string $xpath, int $expectedCount): void {
