@@ -27,11 +27,11 @@ final class XPathAssertTest extends PHPUnitTestCase implements ExtendedTestCase 
 		return [
 			'HTML when xpath exists and there are children' => [null, 'html', '<!DOCTYPE html><body><p></p></body>', '//body', 1],
 			'HTML when xpath exists and there are children with text' => [null, 'html', '<!DOCTYPE html><body>text<p></p></body>', '//body', 2],
-			'HTML when xpath exists and children mismatch' => ['Expected to find 1 children elements for the xpath "//body", actual: 0', 'html', '<!DOCTYPE html><body></body>', '//body', 1],
+			'HTML when xpath exists and children mismatch' => ['Expected to find 1 child elements for the xpath "//body", actual: 0', 'html', '<!DOCTYPE html><body></body>', '//body', 1],
 			'HTML when xpath not exists' => ['Expected to find at least one element matching the xpath "//p"', 'html', '<!DOCTYPE html><body></body>', '//p', 1],
 			'XML when xpath exists and there are children' => [null, 'xml', '<body><p></p></body>', '//body', 1],
 			'XML when xpath exists and there are children with text' => [null, 'xml', '<body>text<p></p></body>', '//body', 2],
-			'XML when xpath exists and children mismatch' => ['Expected to find 1 children elements for the xpath "//body", actual: 0', 'xml', '<body></body>', '//body', 1],
+			'XML when xpath exists and children mismatch' => ['Expected to find 1 child elements for the xpath "//body", actual: 0', 'xml', '<body></body>', '//body', 1],
 			'XML when xpath not exists' => ['Expected to find at least one element matching the xpath "//p"', 'xml', '<body></body>', '//p', 1],
 		];
 	}
@@ -51,6 +51,26 @@ final class XPathAssertTest extends PHPUnitTestCase implements ExtendedTestCase 
 			'HTML failed' => ['Expected to find 2 elements matching the xpath "//body/p", actual: 1', 'html', '<!DOCTYPE html><body><p></p></body>', '//body/p', 2],
 			'XML passed' => [null, 'xml', '<body><p></p><p></p></body>', '//body/p', 2],
 			'XML failed' => ['Expected to find 2 elements matching the xpath "//body/p", actual: 1', 'xml', '<body><p></p></body>', '//body/p', 2],
+		];
+	}
+
+	#[Test]
+	#[DataProvider('dataAssertEmpty')]
+	#[TestDox('assertEmpty()')]
+	public function testAssertEmpty(?string $exceptionMessage, string $format, string $content, string $xpath): void {
+		$this->assert($exceptionMessage, $format, $content, static function (XPathAssert $assert) use ($xpath): void {
+			$assert->assertEmpty($xpath);
+		});
+	}
+
+	public static function dataAssertEmpty(): array {
+		return [
+			'HTML passed' => [null, 'html', '<!DOCTYPE html><body></body>', '//body'],
+			'HTML failed' => ['Expected to find 0 child elements for the xpath "//body", actual: 1', 'html', '<!DOCTYPE html><body><p></p></body>', '//body'],
+			'HTML failed when xpath not exists' => ['Expected to find at least one element matching the xpath "//p"', 'html', '<!DOCTYPE html><body></body>', '//p'],
+			'XML passed' => [null, 'xml', '<body></body>', '//body'],
+			'XML failed' => ['Expected to find 0 child elements for the xpath "//body", actual: 1', 'xml', '<body><p></p></body>', '//body'],
+			'XML failed when xpath not exists' => ['Expected to find at least one element matching the xpath "//p"', 'xml', '<body></body>', '//p'],
 		];
 	}
 

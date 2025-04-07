@@ -10,7 +10,6 @@ use PHPUnit\Framework\TestCase;
 use function array_map;
 use function array_reduce;
 
-// TODO: assertEmpty(string $xpath)
 // TODO: assertNotEmpty(string $xpath)
 // TODO: assertTextNotEquals(string $xpath, string $content)
 // TODO: assertContains(string $xpath, string $content)
@@ -33,7 +32,7 @@ final class XPathAssert {
 	}
 
 	/**
-	 * Assert that the given xpath has `$count` children elements.
+	 * Assert that the given xpath has `$count` child elements.
 	 * @param string $xpath Xpath to find elements by.
 	 * @param int $count Children count to expect.
 	 * @return void
@@ -55,7 +54,7 @@ final class XPathAssert {
 			fn (int $prev, int $cur): int => $prev + $cur,
 			0
 		);
-		$this->test->assertEquals($count, $actual, "Expected to find {$count} children elements for the xpath \"{$xpath}\", actual: {$actual}");
+		$this->test->assertEquals($count, $actual, "Expected to find {$count} child elements for the xpath \"{$xpath}\", actual: {$actual}");
 	}
 
 	/**
@@ -71,6 +70,20 @@ final class XPathAssert {
 	public function assertCount(string $xpath, int $expectedCount): void {
 		$length = $this->xpath->query($xpath)->count();
 		$this->test->assertEquals($expectedCount, $length, "Expected to find {$expectedCount} elements matching the xpath \"{$xpath}\", actual: {$length}");
+	}
+
+	/**
+	 * Assert that the given xpath has no children. The same as `$this->assertChildrenCount($xpath, 0)`.
+	 * @param string $xpath Xpath to find elements by.
+	 * @return void
+	 * @throws AssertionFailedError When there are no elements matching the given xpath.
+	 * @throws ExpectationFailedException When the given xpath has child elements.
+	 * ```php
+	 * $this->assertEmpty('//p');
+	 * ```
+	 */
+	public function assertEmpty(string $xpath): void {
+		$this->assertChildrenCount($xpath, 0);
 	}
 
 	/**
