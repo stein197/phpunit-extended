@@ -13,7 +13,7 @@ use function trim;
 use const PREG_SPLIT_NO_EMPTY;
 
 /**
- * Response assertions.
+ * PSR-7 response assertions.
  * @package Stein197\PHPUnit
  */
 final class ResponseAssert {
