@@ -366,7 +366,8 @@ final class ResponseAssertTest extends PHPUnitTestCase implements ExtendedTestCa
 			'HTML failed' => ['Expected to find at least one element matching the xpath "//body/p"', new Response(200, ['Content-Type' => 'text/html'], '<!DOCTYPE html><body></body>'), '//body/p'],
 			'XML passed' => [null, new Response(200, ['Content-Type' => 'text/xml'], '<body><p></p></body>'), '//body/p'],
 			'XML failed' => ['Expected to find at least one element matching the xpath "//body/p"', new Response(200, ['Content-Type' => 'text/xml'], '<body></body>'), '//body/p'],
-			'invalid format' => ['Expected the response to have content-type of either "text/html" or "text/xml", actual: "text/plain"', new Response(200, ['Content-Type' => 'text/plain'], '<body><p></p></body>'), '//body/p'],
+			'invalid content-type' => ['Expected the response to have content-type of either "text/html" or "text/xml", actual: "text/plain"', new Response(200, ['Content-Type' => 'text/plain'], '<body><p></p></body>'), '//body/p'],
+			'no content-type' => ['Expected the response to have content-type of either "text/html" or "text/xml", actual: ""', new Response(200, [], '<body><p></p></body>'), '//body/p'],
 		];
 	}
 
