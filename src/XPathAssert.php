@@ -6,7 +6,6 @@ use Dom\XPath;
 use PHPUnit\Framework\ExpectationFailedException;
 use PHPUnit\Framework\TestCase;
 
-// TODO: assertExists(string $xpath)
 // TODO: assertNotExists(string $xpath)
 // TODO: assertContentExists(string $xpath, string $content)
 // TODO: assertContentNotExists(string $xpath, string $content)
@@ -35,9 +34,26 @@ final class XPathAssert {
 	 * @param int $expectedCount Expected amount of elements to find by the xpath.
 	 * @return void
 	 * @throws ExpectationFailedException If the amount of the found elements is not equal to the `$expectedCount`.
+	 * ```php
+	 * $this->assertCount('//p', 1);
+	 * ```
 	 */
 	public function assertCount(string $xpath, int $expectedCount): void {
 		$length = $this->xpath->query($xpath)->count();
 		$this->test->assertEquals($expectedCount, $length, "Expected to find {$expectedCount} elements matching the xpath \"{$xpath}\", actual: {$length}");
+	}
+
+	/**
+	 * Assert that the given xpath exists.
+	 * @param string $xpath XPath to find elements by.
+	 * @return void
+	 * @throws ExpectationFailedException If there are no elements matching the given xpath.
+	 * ```php
+	 * $this->assertExists('//p');
+	 * ```
+	 */
+	public function assertExists(string $xpath): void {
+		$length = $this->xpath->query($xpath)->count();
+		$this->test->assertGreaterThan(0, $length, "Expected to find at least one element matching the xpath \"{$xpath}\"");
 	}
 }
