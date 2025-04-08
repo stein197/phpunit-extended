@@ -3,6 +3,7 @@ namespace Stein197\PHPUnit;
 
 use Dom\HTMLDocument;
 use Dom\XMLDocument;
+use JsonPath\InvalidJsonException;
 use JsonPath\JsonObject;
 use Psr\Http\Message\ResponseInterface;
 use Stein197\PHPUnit\Assert\DocumentAssert;
@@ -26,7 +27,11 @@ trait TestCase {
 	 * @inheritdoc
 	 */
 	public function json(string $json): JsonAssert {
-		return new JsonAssert($this, new JsonObject($json));
+		try {
+			return new JsonAssert($this, new JsonObject($json));
+		} catch (InvalidJsonException $ex) {
+			$this->fail($ex->getMessage());
+		}
 	}
 
 	/**

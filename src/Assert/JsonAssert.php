@@ -5,7 +5,6 @@ use JsonPath\JsonObject;
 use PHPUnit\Framework\TestCase;
 use function sizeof;
 
-// TODO: response()->json()
 /**
  * JSON document assertions by JSONPath queries.
  * @package Stein197\PHPUnit\Assert

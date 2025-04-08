@@ -23,6 +23,7 @@ use const PREG_SPLIT_NO_EMPTY;
 final class ResponseAssert {
 
 	private ?DocumentAssert $doc = null;
+	private ?JsonAssert $json = null;
 
 	public function __construct(
 		private TestCase & ExtendedTestCase $test,
@@ -354,6 +355,23 @@ final class ResponseAssert {
 		if ($contentType === 'text/xml')
 			return $this->doc = $this->test->xml($this->getResponseContents());
 		$this->test->fail("Expected the response to have content-type of either \"text/html\" or \"text/xml\", actual: \"{$contentType}\"");
+	}
+
+	/**
+	 * Return a JSON assertion object containing the response content.
+	 * @return JsonAssert JSON assertion object.
+	 * @throws AssertionFailedError If the content-type is not `application/json`.
+	 * ```php
+	 * $this->json()->assertCount('$.books[*]', 10);
+	 * ```
+	 */
+	public function json(): JsonAssert {
+		if ($this->json)
+			return $this->json;
+		$contentType = @$this->response->getHeader('Content-Type')[0];
+		if ($contentType === 'application/json')
+			return $this->json = $this->test->json($this->getResponseContents());
+		$this->test->fail("Expected the response to have content-type \"application/json\", actual: \"{$contentType}\"");
 	}
 
 	private function getResponseContents(): string {

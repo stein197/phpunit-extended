@@ -389,6 +389,25 @@ final class ResponseAssertTest extends PHPUnitTestCase implements ExtendedTestCa
 		];
 	}
 
+	#[Test]
+	#[DataProvider('dataJson')]
+	#[TestDox('json()')]
+	public function testJson(?string $exceptionMessage, ResponseInterface $response, string $jsonpath, int $expectedCount): void {
+		$this->assert($exceptionMessage, $response, static function (ResponseAssert $response) use ($jsonpath, $expectedCount): void {
+			$response->json()->assertCount($jsonpath, $expectedCount);
+		});
+	}
+
+	public static function dataJson(): array {
+		return [
+			'passed' => [null, new Response(200, ['Content-Type' => 'application/json'], '{"user": [{}, {}]}'), '$.user[*]', 2],
+			'failed' => ['Expected to find 2 elements matching the JSONPath "$.user[*]", actual: 0', new Response(200, ['Content-Type' => 'application/json'], '{}'), '$.user[*]', 2],
+			'invalid content-type' => ['Expected the response to have content-type "application/json", actual: "text/plain"', new Response(200, ['Content-Type' => 'text/plain'], '{}'), '$.user', 2],
+			'no content-type' => ['Expected the response to have content-type "application/json", actual: ""', new Response(200, [], '{}'), '$.user', 2],
+			'invalid JSON' => ['string does not contain a valid JSON object', new Response(200, ['Content-Type' => 'application/json'], '{"user":'), '$.user', 2],
+		];
+	}
+
 
 	private function assert(?string $exceptionMessage, ResponseInterface $response, callable $f): void {
 		if ($exceptionMessage) {
