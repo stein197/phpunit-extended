@@ -2,6 +2,8 @@
 namespace Stein197\PHPUnit;
 
 use Psr\Http\Message\ResponseInterface;
+use Stein197\PHPUnit\Assert\ResponseAssert;
+use Stein197\PHPUnit\Assert\XPathAssert;
 
 /**
  * Extended PHPUnit assertions.

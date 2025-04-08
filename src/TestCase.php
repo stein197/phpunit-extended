@@ -4,6 +4,8 @@ namespace Stein197\PHPUnit;
 use Dom\HTMLDocument;
 use Dom\XMLDocument;
 use Psr\Http\Message\ResponseInterface;
+use Stein197\PHPUnit\Assert\ResponseAssert;
+use Stein197\PHPUnit\Assert\XPathAssert;
 use const Dom\HTML_NO_DEFAULT_NS;
 
 /**

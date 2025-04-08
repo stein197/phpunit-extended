@@ -1,5 +1,5 @@
 <?php
-namespace Stein197\PHPUnit;
+namespace Stein197\PHPUnit\Assert;
 
 use Dom\Document;
 use Dom\Node;

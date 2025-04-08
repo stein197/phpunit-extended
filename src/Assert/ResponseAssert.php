@@ -1,5 +1,5 @@
 <?php
-namespace Stein197\PHPUnit;
+namespace Stein197\PHPUnit\Assert;
 
 use PHPUnit\Framework\AssertionFailedError;
 use PHPUnit\Framework\ExpectationFailedException;
@@ -7,6 +7,7 @@ use PHPUnit\Framework\GeneratorNotSupportedException;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ResponseInterface;
 use RuntimeException;
+use Stein197\PHPUnit\ExtendedTestCase;
 use function explode;
 use function join;
 use function json_validate;
@@ -16,7 +17,7 @@ use const PREG_SPLIT_NO_EMPTY;
 
 /**
  * PSR-7 response assertions.
- * @package Stein197\PHPUnit
+ * @package Stein197\PHPUnit\Assert
  */
 final class ResponseAssert {
 
