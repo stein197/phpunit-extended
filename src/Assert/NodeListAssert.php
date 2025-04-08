@@ -1,6 +1,7 @@
 <?php
 namespace Stein197\PHPUnit\Assert;
 
+use Dom\Node;
 use Dom\NodeList;
 use PHPUnit\Framework\TestCase;
 
@@ -38,5 +39,23 @@ final readonly class NodeListAssert {
 	public function assertExists(): void {
 		$length = $this->nodeList->count();
 		$this->test->assertGreaterThan(0, $length, "Expected to find at least one element matching the query \"{$this->query}\"");
+	}
+
+	/**
+	 * Assert that at least one element has the given text.
+	 * @param string $text Text to expect.
+	 * @return void
+	 * @throws ExpectationFailedException
+	 * @throws AssertionFailedError If there are no elements that contain the given text.
+	 * ```php
+	 * $this->assertTextEquals('Hello, World!');
+	 * ```
+	 */
+	public function assertTextEquals(string $text): void {
+		$contents = array_map(
+			fn (Node $node) => $node->textContent,
+			[...$this->nodeList]
+		);
+		$this->test->assertContains($text, $contents, "Expected to find at least one element matching the query \"{$this->query}\" and containing the text \"{$text}\"");
 	}
 }

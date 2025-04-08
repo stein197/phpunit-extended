@@ -95,25 +95,6 @@ final class XPathAssert {
 		$this->assertCount($xpath, 0);
 	}
 
-	/**
-	 * Assert that at least one element by the given xpath has the given text.
-	 * @param string $xpath XPath to find elements by.
-	 * @param string $text Text to expect.
-	 * @return void
-	 * @throws ExpectationFailedException
-	 * @throws AssertionFailedError If there are no elements that contain the given text.
-	 * ```php
-	 * $this->assertTextEquals('//p', 'Hello, World!');
-	 * ```
-	 */
-	public function assertTextEquals(string $xpath, string $text): void {
-		$contents = array_map(
-			fn (Node $node) => $node->textContent,
-			[...$this->xpath->query($xpath)]
-		);
-		$this->test->assertContains($text, $contents, "Expected to find at least one element matching the xpath \"{$xpath}\" and containing the text \"{$text}\"");
-	}
-
 	private function getChildrenCount(string $xpath): int {
 		$elements = $this->xpath->query($xpath);
 		if (!$elements->count())
