@@ -8,12 +8,16 @@ use PHPUnit\Framework\TestCase;
 use function sizeof;
 
 // TODO: assertPartial(array $expected)
+// TODO: assertContains(string $query, mixed | array $partial)
+// TODO: assertNotContains(string $query, mixed | array $partial)
+// TODO: assertTextMatchesRegex(string $query, string $regex)
+// TODO: assertTextNotMatchesRegex(string $query, string $regex)
 // TODO: assertEquals(string $query, mixed $value)
 // TODO: assertNotEquals(string $query, mixed $value)
 // TODO: assertEmpty(string $query)
 // TODO: assertNotEmpty(string $query)
 // TODO: find(string $query): mixed
-/**
+/**\
  * JSON document assertions by JSONPath queries.
  * @package Stein197\PHPUnit\Assert
  * @internal
