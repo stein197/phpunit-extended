@@ -5,6 +5,14 @@ use JsonPath\JsonObject;
 use PHPUnit\Framework\TestCase;
 use function sizeof;
 
+// TODO: assertPartial(array $expected)
+// TODO: assertEquals(string $query, mixed $value)
+// TODO: assertNotEquals(string $query, mixed $value)
+// TODO: assertEmpty(string $query)
+// TODO: assertNotEmpty(string $query)
+// TODO: assertExists(string $query)
+// TODO: assertNotExists(string $query)
+// TODO: find(string $query): mixed
 /**
  * JSON document assertions by JSONPath queries.
  * @package Stein197\PHPUnit\Assert
