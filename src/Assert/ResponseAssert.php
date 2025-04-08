@@ -10,7 +10,6 @@ use RuntimeException;
 use Stein197\PHPUnit\ExtendedTestCase;
 use function explode;
 use function join;
-use function json_validate;
 use function preg_split;
 use function trim;
 use const PREG_SPLIT_NO_EMPTY;
@@ -334,7 +333,7 @@ final class ResponseAssert {
 	 */
 	public function assertJson(): void {
 		$this->assertContentType('application/json');
-		$this->test->assertTrue(json_validate($this->getResponseContents()), 'Expected the response to have a valid JSON');
+		$this->test->assertJson($this->getResponseContents(), 'Expected the response to have a valid JSON');
 	}
 
 	/**
