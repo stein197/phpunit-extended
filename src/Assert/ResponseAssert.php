@@ -18,10 +18,11 @@ use const PREG_SPLIT_NO_EMPTY;
 /**
  * PSR-7 response assertions.
  * @package Stein197\PHPUnit\Assert
+ * @internal
  */
 final class ResponseAssert {
 
-	private ?XPathAssert $xpath = null;
+	private ?DocumentAssert $doc = null;
 
 	public function __construct(
 		private TestCase & ExtendedTestCase $test,
@@ -336,22 +337,22 @@ final class ResponseAssert {
 	}
 
 	/**
-	 * Return an xpath assertion object containing the response content.
-	 * @return XPathAssert Xpath assertion object.
+	 * Return a document assertion object containing the response content.
+	 * @return DocumentAssert Document assertion object.
 	 * @throws RuntimeException
-	 * @throws AssertionFailedError If the Content-Type header is not `text/html` nor `text/xml`.
+	 * @throws AssertionFailedError If the content-type is not `text/html` nor `text/xml`.
 	 * ```php
-	 * $this->xpath()->assertExists('//p');
+	 * $this->document()->query('body p')->assertExists();
 	 * ```
 	 */
-	public function xpath(): XPathAssert {
-		if ($this->xpath)
-			return $this->xpath;
+	public function document(): DocumentAssert {
+		if ($this->doc)
+			return $this->doc;
 		$contentType = @$this->response->getHeader('Content-Type')[0];
 		if ($contentType === 'text/html')
-			return $this->xpath = $this->test->xpathHtml($this->getResponseContents());
+			return $this->doc = $this->test->html($this->getResponseContents());
 		if ($contentType === 'text/xml')
-			return $this->xpath = $this->test->xpathXml($this->getResponseContents());
+			return $this->doc = $this->test->xml($this->getResponseContents());
 		$this->test->fail("Expected the response to have content-type of either \"text/html\" or \"text/xml\", actual: \"{$contentType}\"");
 	}
 

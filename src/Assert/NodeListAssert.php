@@ -12,15 +12,31 @@ use PHPUnit\Framework\TestCase;
 /**
  * HTML/XML nodes assertions.
  * @package Stein197\PHPUnit\Assert
+ * @internal
  */
 final readonly class NodeListAssert {
 
 	/**
 	 * @param TestCase $test PHPUnit test case object to call assertions from.
 	 * @param NodeList $nodeList HTML/XML nodes.
+	 * @param string $query Query used to find the list. Only for debugging purpose.
 	 */
 	public function __construct(
 		private TestCase $test,
-		private NodeList $nodeList
+		private NodeList $nodeList,
+		private string $query
 	) {}
+
+	/**
+	 * Assert that elements exist.
+	 * @return void
+	 * @throws ExpectationFailedException If there are no elements.
+	 * ```php
+	 * $this->assertExists();
+	 * ```
+	 */
+	public function assertExists(): void {
+		$length = $this->nodeList->count();
+		$this->test->assertGreaterThan(0, $length, "Expected to find at least one element matching the query \"{$this->query}\"");
+	}
 }

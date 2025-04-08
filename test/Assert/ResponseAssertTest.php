@@ -370,20 +370,20 @@ final class ResponseAssertTest extends PHPUnitTestCase implements ExtendedTestCa
 	}
 
 	#[Test]
-	#[DataProvider('dataXpath')]
-	#[TestDox('xpath()')]
-	public function testXpath(?string $exceptionMessage, ResponseInterface $response, string $xpath): void {
+	#[DataProvider('dataDocument')]
+	#[TestDox('document()')]
+	public function testDocument(?string $exceptionMessage, ResponseInterface $response, string $xpath): void {
 		$this->assert($exceptionMessage, $response, static function (ResponseAssert $response) use ($xpath): void {
-			$response->xpath()->assertExists($xpath);
+			$response->document()->xpath($xpath)->assertExists();
 		});
 	}
 
-	public static function dataXpath(): array {
+	public static function dataDocument(): array {
 		return [
 			'HTML passed' => [null, new Response(200, ['Content-Type' => 'text/html'], '<!DOCTYPE html><body><p></p></body>'), '//body/p'],
-			'HTML failed' => ['Expected to find at least one element matching the xpath "//body/p"', new Response(200, ['Content-Type' => 'text/html'], '<!DOCTYPE html><body></body>'), '//body/p'],
+			'HTML failed' => ['Expected to find at least one element matching the query "//body/p"', new Response(200, ['Content-Type' => 'text/html'], '<!DOCTYPE html><body></body>'), '//body/p'],
 			'XML passed' => [null, new Response(200, ['Content-Type' => 'text/xml'], '<body><p></p></body>'), '//body/p'],
-			'XML failed' => ['Expected to find at least one element matching the xpath "//body/p"', new Response(200, ['Content-Type' => 'text/xml'], '<body></body>'), '//body/p'],
+			'XML failed' => ['Expected to find at least one element matching the query "//body/p"', new Response(200, ['Content-Type' => 'text/xml'], '<body></body>'), '//body/p'],
 			'invalid content-type' => ['Expected the response to have content-type of either "text/html" or "text/xml", actual: "text/plain"', new Response(200, ['Content-Type' => 'text/plain'], '<body><p></p></body>'), '//body/p'],
 			'no content-type' => ['Expected the response to have content-type of either "text/html" or "text/xml", actual: ""', new Response(200, [], '<body><p></p></body>'), '//body/p'],
 		];

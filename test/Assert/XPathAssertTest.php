@@ -95,24 +95,6 @@ final class XPathAssertTest extends PHPUnitTestCase implements ExtendedTestCase 
 	}
 
 	#[Test]
-	#[DataProvider('dataAssertExists')]
-	#[TestDox('assertExists()')]
-	public function testAssertExists(?string $exceptionMessage, string $format, string $content, string $xpath): void {
-		$this->assert($exceptionMessage, $format, $content, static function (XPathAssert $assert) use ($xpath): void {
-			$assert->assertExists($xpath);
-		});
-	}
-
-	public static function dataAssertExists(): array {
-		return [
-			'HTML passed' => [null, 'html', '<!DOCTYPE html><body><p></p></body>', '//body/p'],
-			'HTML failed' => ['Expected to find at least one element matching the xpath "//body/p"', 'html', '<!DOCTYPE html><body></body>', '//body/p'],
-			'XML passed' => [null, 'xml', '<body><p></p><p></p></body>', '//body/p'],
-			'XML failed' => ['Expected to find at least one element matching the xpath "//body/p"', 'xml', '<body></body>', '//body/p'],
-		];
-	}
-
-	#[Test]
 	#[DataProvider('dataAssertNotExists')]
 	#[TestDox('assertNotExists()')]
 	public function testAssertNotExists(?string $exceptionMessage, string $format, string $content, string $xpath): void {

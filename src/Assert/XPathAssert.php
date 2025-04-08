@@ -83,20 +83,6 @@ final class XPathAssert {
 	}
 
 	/**
-	 * Assert that the given xpath exists.
-	 * @param string $xpath XPath to find elements by.
-	 * @return void
-	 * @throws ExpectationFailedException If there are no elements matching the given xpath.
-	 * ```php
-	 * $this->assertExists('//p');
-	 * ```
-	 */
-	public function assertExists(string $xpath): void {
-		$length = $this->xpath->query($xpath)->count();
-		$this->test->assertGreaterThan(0, $length, "Expected to find at least one element matching the xpath \"{$xpath}\"");
-	}
-
-	/**
 	 * Assert that the given xpath does not exist.
 	 * @param string $xpath XPath to find elements by.
 	 * @return void

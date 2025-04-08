@@ -11,6 +11,7 @@ use PHPUnit\Framework\TestCase;
 /**
  * HTML/XML document assertions.
  * @package Stein197\PHPUnit\Assert
+ * @internal
  */
 final readonly class DocumentAssert {
 
@@ -36,7 +37,7 @@ final readonly class DocumentAssert {
 	 * ```
 	 */
 	public function xpath(string $xpath): NodeListAssert {
-		return new NodeListAssert($this->test, $this->xpath->query($xpath));
+		return new NodeListAssert($this->test, $this->xpath->query($xpath), $xpath);
 	}
 
 	/**
@@ -48,6 +49,6 @@ final readonly class DocumentAssert {
 	 * ```
 	 */
 	public function query(string $query): NodeListAssert {
-		return new NodeListAssert($this->test, $this->doc->querySelectorAll($query));
+		return new NodeListAssert($this->test, $this->doc->querySelectorAll($query), $query);
 	}
 }
