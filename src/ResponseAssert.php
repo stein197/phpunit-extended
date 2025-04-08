@@ -8,6 +8,7 @@ use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ResponseInterface;
 use RuntimeException;
 use function explode;
+use function join;
 use function json_validate;
 use function preg_split;
 use function trim;
@@ -223,12 +224,8 @@ final class ResponseAssert {
 	 * ```
 	 */
 	public function assertHeaderEquals(string $header, string $value): void {
-		foreach ($this->response->getHeader($header) as $v)
-			if ($v === $value) {
-				$this->test->assertEquals($value, $v);
-				return;
-			}
-		$this->test->fail("Expected the response to have the header \"{$header}\" with value \"{$value}\"");
+		$values = $this->response->getHeader($header);
+		$this->test->assertContains($value, $values, "Expected the response to have the header \"{$header}\" with value \"{$value}\", actual: \"" . join('", "', $values) . '"');
 	}
 
 	/**

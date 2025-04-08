@@ -125,7 +125,7 @@ final class ResponseAssertTest extends PHPUnitTestCase implements ExtendedTestCa
 	public static function dataAssertContentType(): array {
 		return [
 			'passed' => [null, new Response(200, ['Content-Type' => 'text/html']), 'text/html'],
-			'failed' => ['Expected the response to have the header "Content-Type" with value "text/html"', new Response(200), 'text/html'],
+			'failed' => ['Expected the response to have the header "Content-Type" with value "text/html", actual: ""', new Response(200), 'text/html'],
 		];
 	}
 
@@ -228,7 +228,7 @@ final class ResponseAssertTest extends PHPUnitTestCase implements ExtendedTestCa
 		return [
 			'case-sensetive' => [null, new Response(200, ['Content-Type' => ['text/html']]), 'Content-Type', 'text/html'],
 			'case-insensetive' => [null, new Response(200, ['Content-Type' => 'text/html']), 'content-type', 'text/html'],
-			'failed' => ['Expected the response to have the header "Content-Type"', new Response(200, ['Content-Type' => 'text/html']), 'Content-Type', 'text/plain'],
+			'failed' => ['Expected the response to have the header "Content-Type" with value "text/plain", actual: "text/html"', new Response(200, ['Content-Type' => 'text/html']), 'Content-Type', 'text/plain'],
 		];
 	}
 
@@ -329,7 +329,8 @@ final class ResponseAssertTest extends PHPUnitTestCase implements ExtendedTestCa
 		return [
 			'status is 201' => [null, new Response(201, ['Location' => '/url']), '/url'],
 			'status is 3xx' => [null, new Response(302, ['Location' => '/url']), '/url'],
-			'no location' => ['Expected the response to have the header "Location" with value "/url"', new Response(302), '/url'],
+			'no location' => ['Expected the response to have the header "Location" with value "/url", actual: ""', new Response(302), '/url'],
+			'wrong location' => ['Expected the response to have the header "Location" with value "/url", actual: "/unknown"', new Response(302, ['Location' => '/unknown']), '/url'],
 			'status is not 201 or 3xx' => ['Expected the response to have the status 201 or 3xx, actual: 200', new Response(200, ['Location' => '/url']), '/url'],
 		];
 	}
@@ -363,7 +364,7 @@ final class ResponseAssertTest extends PHPUnitTestCase implements ExtendedTestCa
 	public static function dataAssertJson(): array {
 		return [
 			'passed' => [null, new Response(200, ['Content-Type' => 'application/json'], '{}'), 200],
-			'invalid content-type' => ['Expected the response to have the header "Content-Type" with value "application/json"', new Response(500, ['Content-Type' => 'text/plain']), 200],
+			'invalid content-type' => ['Expected the response to have the header "Content-Type" with value "application/json", actual: "text/plain"', new Response(500, ['Content-Type' => 'text/plain']), 200],
 			'invalid json' => ['Expected the response to have a valid JSON', new Response(500, ['Content-Type' => 'application/json'], '{'), 200],
 		];
 	}
