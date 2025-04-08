@@ -30,6 +30,22 @@ final class JsonAssertTest extends PHPUnitTestCase {
 		];
 	}
 
+	#[Test]
+	#[DataProvider('dataAssertExists')]
+	#[TestDox('assertExists()')]
+	public function testAssertExists(?string $exceptionMessage, string $json, string $query): void {
+		$this->assert($exceptionMessage, $json, static function (JsonAssert $assert) use ($query): void {
+			$assert->assertExists($query);
+		});
+	}
+
+	public static function dataAssertExists(): array {
+		return [
+			'passed' => [null, '{"user": [{}, {}]}', '$.user'],
+			'failed' => ['Expected to find at least one element matching the JSONPath "$.user", actual: 0', '{}', '$.user'],
+		];
+	}
+
 	private function assert(?string $exceptionMessage, string $json, callable $f): void {
 		if ($exceptionMessage) {
 			$this->expectException(AssertionFailedError::class);
