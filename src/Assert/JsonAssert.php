@@ -12,7 +12,6 @@ use function sizeof;
 // TODO: assertNotEquals(string $query, mixed $value)
 // TODO: assertEmpty(string $query)
 // TODO: assertNotEmpty(string $query)
-// TODO: assertNotExists(string $query)
 // TODO: find(string $query): mixed
 /**
  * JSON document assertions by JSONPath queries.
@@ -59,5 +58,19 @@ final readonly class JsonAssert {
 	public function assertExists(string $query): void {
 		$length = sizeof($this->json->get($query));
 		$this->test->assertGreaterThan(0, $length, "Expected to find at least one element matching the JSONPath \"{$query}\"");
+	}
+
+	/**
+	 * Assert that there are no elements matching the `$query`.
+	 * @param string $query JSONPath to find elements by.
+	 * @return void
+	 * @throws InvalidJsonPathException
+	 * @throws ExpectationFailedException If there is at least one element matching the given query.
+	 * ```php
+	 * $this->assertNotExists('$.user');
+	 * ```
+	 */
+	public function assertNotExists(string $query): void {
+		$this->assertCount($query, 0);
 	}
 }
