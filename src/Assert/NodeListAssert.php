@@ -29,10 +29,52 @@ final readonly class NodeListAssert {
 	) {}
 
 	/**
+	 * Assert that there are child elements.
+	 * @param int $count Children count to expect.
+	 * @return void
+	 * @throws AssertionFailedError When there are no nodes in the list at all.
+	 * @throws ExpectationFailedException When the expected amount of children does not match the expected one.
+	 * ```php
+	 * $this->assertChildrenCount(1);
+	 * ```
+	 */
+	public function assertChildrenCount(int $count): void {
+		$actual = $this->getChildrenCount();
+		$this->test->assertEquals($count, $actual, "Expected to find {$count} child elements for the query \"{$this->query}\", actual: {$actual}");
+	}
+
+	/**
+	 * Assert that there are `$expectedCount` elements in the list.
+	 * @param int $expectedCount Expected amount of elements to find.
+	 * @return void
+	 * @throws ExpectationFailedException If the amount of the found elements is not equal to the `$expectedCount`.
+	 * ```php
+	 * $this->assertCount(1);
+	 * ```
+	 */
+	public function assertCount(int $expectedCount): void {
+		$length = $this->nodeList->count();
+		$this->test->assertEquals($expectedCount, $length, "Expected to find {$expectedCount} elements matching the query \"{$this->query}\", actual: {$length}");
+	}
+
+	/**
+	 * Assert that the list elements have no children. The same as `$this->assertChildrenCount(0)`.
+	 * @return void
+	 * @throws AssertionFailedError When there are no nodes in the list at all.
+	 * @throws ExpectationFailedException When the list elements have no child elements.
+	 * ```php
+	 * $this->assertEmpty();
+	 * ```
+	 */
+	public function assertEmpty(): void {
+		$this->assertChildrenCount(0);
+	}
+
+	/**
 	 * Assert that there is at least one child.
 	 * @return void
 	 * @throws AssertionFailedError When there are no children.
-	 * @throws ExpectationFailedException When there are no nodes at all.
+	 * @throws ExpectationFailedException When there are no nodes in the list at all.
 	 * ```php
 	 * $this->assertNotEmpty();
 	 * ```
@@ -53,6 +95,18 @@ final readonly class NodeListAssert {
 	public function assertExists(): void {
 		$length = $this->nodeList->count();
 		$this->test->assertGreaterThan(0, $length, "Expected to find at least one element matching the query \"{$this->query}\"");
+	}
+
+	/**
+	 * Assert that there are no elements in the list at all.
+	 * @return void
+	 * @throws ExpectationFailedException If there is at least one element in the list.
+	 * ```php
+	 * $this->assertNotExists();
+	 * ```
+	 */
+	public function assertNotExists(): void {
+		$this->assertCount(0);
 	}
 
 	/**
