@@ -1,5 +1,5 @@
 <?php
-namespace Test;
+namespace Test\Assert;
 
 use Nyholm\Psr7\Response;
 use PHPUnit\Framework\AssertionFailedError;

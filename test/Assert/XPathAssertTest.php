@@ -1,5 +1,5 @@
 <?php
-namespace Test;
+namespace Test\Assert;
 
 use PHPUnit\Framework\AssertionFailedError;
 use PHPUnit\Framework\Attributes\DataProvider;
