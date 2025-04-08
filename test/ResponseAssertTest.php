@@ -352,6 +352,23 @@ final class ResponseAssertTest extends PHPUnitTestCase implements ExtendedTestCa
 	}
 
 	#[Test]
+	#[DataProvider('dataAssertJson')]
+	#[TestDox('assertJson()')]
+	public function testAssertJson(?string $exceptionMessage, ResponseInterface $response): void {
+		$this->assert($exceptionMessage, $response, static function (ResponseAssert $response): void {
+			$response->assertJson();
+		});
+	}
+
+	public static function dataAssertJson(): array {
+		return [
+			'passed' => [null, new Response(200, ['Content-Type' => 'application/json'], '{}'), 200],
+			'invalid content-type' => ['Expected the response to have the header "Content-Type" with value "application/json"', new Response(500, ['Content-Type' => 'text/plain']), 200],
+			'invalid json' => ['Expected the response to have a valid JSON', new Response(500, ['Content-Type' => 'application/json'], '{'), 200],
+		];
+	}
+
+	#[Test]
 	#[DataProvider('dataXpath')]
 	#[TestDox('xpath()')]
 	public function testXpath(?string $exceptionMessage, ResponseInterface $response, string $xpath): void {

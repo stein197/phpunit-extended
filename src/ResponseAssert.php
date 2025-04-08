@@ -8,6 +8,7 @@ use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ResponseInterface;
 use RuntimeException;
 use function explode;
+use function json_validate;
 use function preg_split;
 use function trim;
 use const PREG_SPLIT_NO_EMPTY;
@@ -319,6 +320,21 @@ final class ResponseAssert {
 	public function assertStatus(int $status): void {
 		$actual = $this->response->getStatusCode();
 		$this->test->assertEquals($status, $actual, "Expected the response to have the status {$status}, actual: {$actual}");
+	}
+
+	/**
+	 * Assert that the response is a valid JSON.
+	 * @return void
+	 * @throws ExpectationFailedException If the content-type is not "application/json" or the content contains invalid JSON.
+	 * @throws AssertionFailedError If the content-type is not "application/json" or the content contains invalid JSON.
+	 * @throws RuntimeException
+	 * ```php
+	 * $this->assertJson();
+	 * ```
+	 */
+	public function assertJson(): void {
+		$this->assertContentType('application/json');
+		$this->test->assertTrue(json_validate($this->getResponseContents()), 'Expected the response to have a valid JSON');
 	}
 
 	/**
