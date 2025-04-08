@@ -2,6 +2,7 @@
 	"conventionalCommits.scopes": [
 		"document",
 		"json",
+		"readme",
 		"response"
 	]
 }
