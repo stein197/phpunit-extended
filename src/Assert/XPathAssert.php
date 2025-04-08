@@ -68,21 +68,6 @@ final class XPathAssert {
 	}
 
 	/**
-	 * Assert that the given xpath has at least one child.
-	 * @param string $xpath Xpath to find elements by.
-	 * @return void
-	 * @throws AssertionFailedError When there are no elements matching the given xpath.
-	 * @throws ExpectationFailedException When the given xpath has no child elements.
-	 * ```php
-	 * $this->assertNotEmpty('//p');
-	 * ```
-	 */
-	public function assertNotEmpty(string $xpath): void {
-		$actual = $this->getChildrenCount($xpath);
-		$this->test->assertGreaterThan(0, $actual, "Expected to find at least one child element matching the xpath \"{$xpath}\"");
-	}
-
-	/**
 	 * Assert that the given xpath does not exist.
 	 * @param string $xpath XPath to find elements by.
 	 * @return void

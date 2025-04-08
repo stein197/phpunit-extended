@@ -29,6 +29,20 @@ final readonly class NodeListAssert {
 	) {}
 
 	/**
+	 * Assert that there is at least one child.
+	 * @return void
+	 * @throws AssertionFailedError When there are no children.
+	 * @throws ExpectationFailedException When there are no nodes at all.
+	 * ```php
+	 * $this->assertNotEmpty();
+	 * ```
+	 */
+	public function assertNotEmpty(): void {
+		$actual = $this->getChildrenCount();
+		$this->test->assertGreaterThan(0, $actual, "Expected to find at least one child element matching the query \"{$this->query}\"");
+	}
+
+	/**
 	 * Assert that elements exist.
 	 * @return void
 	 * @throws ExpectationFailedException If there are no elements.
@@ -57,5 +71,18 @@ final readonly class NodeListAssert {
 			[...$this->nodeList]
 		);
 		$this->test->assertContains($text, $contents, "Expected to find at least one element matching the query \"{$this->query}\" and containing the text \"{$text}\"");
+	}
+
+	private function getChildrenCount(): int {
+		if (!$this->nodeList->count())
+			$this->test->fail("Expected to find at least one element matching the query \"{$this->query}\"");
+		return array_reduce(
+			array_map(
+				fn (Node $node): int => $node->childNodes->count(),
+				[...$this->nodeList]
+			),
+			fn (int $prev, int $cur): int => $prev + $cur,
+			0
+		);
 	}
 }
