@@ -10,15 +10,7 @@ use PHPUnit\Framework\TestCase;
 use function array_map;
 use function array_reduce;
 
-// TODO: assertTextNotEquals(string $xpath, string $content)
-// TODO: assertContains(string $xpath, string $content)
-// TODO: assertNotContains(string $xpath, string $content)
-// TODO: assertRegexExists(string $xpath, string $regex)
-// TODO: assertRegexNotExists(string $xpath, string $regex)
-// TODO: assertAnchorExists(string $href, array $query = [], ?string $hash = null)
-// TODO: assertAnchorNotExists(string $href, array $query = [], ?string $hash = null)
-// TODO: assertClassCount(string $class, int $expectedCount)
-// TODO: within(string $xpath, callable $f) - use query(, $contextNode)
+// TODO: Delete
 final class XPathAssert {
 
 	private XPath $xpath;

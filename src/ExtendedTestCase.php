@@ -2,6 +2,7 @@
 namespace Stein197\PHPUnit;
 
 use Psr\Http\Message\ResponseInterface;
+use Stein197\PHPUnit\Assert\DocumentAssert;
 use Stein197\PHPUnit\Assert\ResponseAssert;
 use Stein197\PHPUnit\Assert\XPathAssert;
 
@@ -23,6 +24,27 @@ interface ExtendedTestCase {
 	/**
 	 * Return an assertion object to test HTML structure.
 	 * @param string $html HTML string.
+	 * @return DocumentAssert Assertion object.
+	 * ```php
+	 * $this->html('<p></p>')->query('p')->assertCount(1);
+	 * ```
+	 */
+	public function html(string $html): DocumentAssert;
+
+	/**
+	 * Return an assertion object to test XML structure.
+	 * @param string $xml XML string.
+	 * @return DocumentAssert Assertion object.
+	 * ```php
+	 * $this->xml('<p></p>')->xpath('//p')->assertCount(1);
+	 * ```
+	 */
+	public function xml(string $xml): DocumentAssert;
+
+	// TODO: Delete after replacing
+	/**
+	 * Return an assertion object to test HTML structure.
+	 * @param string $html HTML string.
 	 * @return XPathAssert Assertion object.
 	 * ```php
 	 * $this->xpathHtml('<p></p>')->assertCount('//p', 1);
@@ -30,6 +52,7 @@ interface ExtendedTestCase {
 	 */
 	public function xpathHtml(string $html): XPathAssert;
 
+	// TODO: Delete after replacing
 	/**
 	 * Return an assertion object to test XML structure.
 	 * @param string $xml XML string.
