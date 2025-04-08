@@ -3,8 +3,10 @@ namespace Stein197\PHPUnit;
 
 use Dom\HTMLDocument;
 use Dom\XMLDocument;
+use JsonPath\JsonObject;
 use Psr\Http\Message\ResponseInterface;
 use Stein197\PHPUnit\Assert\DocumentAssert;
+use Stein197\PHPUnit\Assert\JsonAssert;
 use Stein197\PHPUnit\Assert\ResponseAssert;
 use const Dom\HTML_NO_DEFAULT_NS;
 
@@ -18,6 +20,13 @@ trait TestCase {
 	 */
 	public function response(ResponseInterface $response): ResponseAssert {
 		return new ResponseAssert($this, $response);
+	}
+
+	/**
+	 * @inheritdoc
+	 */
+	public function json(string $json): JsonAssert {
+		return new JsonAssert($this, new JsonObject($json));
 	}
 
 	/**
