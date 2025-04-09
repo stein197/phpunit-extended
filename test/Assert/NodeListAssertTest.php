@@ -148,7 +148,7 @@ final class NodeListAssertTest extends PHPUnitTestCase {
 			'HTML with string and multiple elements and no matching elements' => ['Expected to find at least one element matching the query "body > p" with the text "second"', 'html', '<!DOCTYPE html><body><p>first</p><p>third</p></body>', 'body > p', 'second'],
 			'HTML with nested string and single element' => [null, 'html', '<!DOCTYPE html><body><p>sec<i>ond</i></p></body>', 'body > p', 'second'],
 			'HTML with nested string and multiple elements and one matching element' => [null, 'html', '<!DOCTYPE html><body><p>first</p><p><i><i>sec</i><i>ond</i></i></p><p>third</p></body>', 'body > p', 'second'],
-			'HTML without elements' => ['Expected to find at least one element matching the query "body > p" with the text "second"', 'html', '<!DOCTYPE html><body></body>', 'body > p', 'second'],
+			'HTML without elements' => ['Expected to find at least one element matching the query "body > p"', 'html', '<!DOCTYPE html><body></body>', 'body > p', 'second'],
 			'HTML substring match' => ['Expected to find at least one element matching the query "body > p" with the text "second"', 'html', '<!DOCTYPE html><body><p>first second third</p></body>', 'body > p', 'second'],
 			'XML with empty string and single empty element' => [null, 'xml', '<body><p></p></body>', '//body/p', ''],
 			'XML with empty string and multiple elements and one empty element' => [null, 'xml', '<body><p>first</p><p></p><p>second</p></body>', '//body/p', ''],
@@ -158,7 +158,7 @@ final class NodeListAssertTest extends PHPUnitTestCase {
 			'XML with string and multiple elements and no matching elements' => ['Expected to find at least one element matching the query "//body/p" with the text "second"', 'xml', '<body><p>first</p><p>third</p></body>', '//body/p', 'second'],
 			'XML with nested string and single element' => [null, 'xml', '<body><p>sec<i>ond</i></p></body>', '//body/p', 'second'],
 			'XML with nested string and multiple elements and one matching element' => [null, 'xml', '<body><p>first</p><p><i><i>sec</i><i>ond</i></i></p><p>third</p></body>', '//body/p', 'second'],
-			'XML without elements' => ['Expected to find at least one element matching the query "//body/p" with the text "second"', 'xml', '<body></body>', '//body/p', 'second'],
+			'XML without elements' => ['Expected to find at least one element matching the query "//body/p"', 'xml', '<body></body>', '//body/p', 'second'],
 			'XML substring match' => ['Expected to find at least one element matching the query "//body/p" with the text "second"', 'xml', '<body><p>first second third</p></body>', '//body/p', 'second'],
 		];
 	}
@@ -182,7 +182,7 @@ final class NodeListAssertTest extends PHPUnitTestCase {
 			'HTML with string and multiple elements and no matching elements' => [null, 'html', '<!DOCTYPE html><body><p>first</p><p>third</p></body>', 'body > p', 'second'],
 			'HTML with nested string and single element' => ['Expected to find no elements matching the query "body > p" with the text "second"', 'html', '<!DOCTYPE html><body><p>sec<i>ond</i></p></body>', 'body > p', 'second'],
 			'HTML with nested string and multiple elements and one matching element' => ['Expected to find no elements matching the query "body > p" with the text "second"', 'html', '<!DOCTYPE html><body><p>first</p><p><i><i>sec</i><i>ond</i></i></p><p>third</p></body>', 'body > p', 'second'],
-			'HTML without elements' => [null, 'html', '<!DOCTYPE html><body></body>', 'body > p', 'second'],
+			'HTML without elements' => ['Expected to find at least one element matching the query "body > p"', 'html', '<!DOCTYPE html><body></body>', 'body > p', 'second'],
 			'HTML substring match' => [null, 'html', '<!DOCTYPE html><body><p>first second third</p></body>', 'body > p', 'second'],
 			'XML with empty string and single empty element' => ['Expected to find no elements matching the query "//body/p" with the text ""', 'xml', '<body><p></p></body>', '//body/p', ''],
 			'XML with empty string and multiple elements and one empty element' => ['Expected to find no elements matching the query "//body/p" with the text ""', 'xml', '<body><p>first</p><p></p><p>second</p></body>', '//body/p', ''],
@@ -192,7 +192,7 @@ final class NodeListAssertTest extends PHPUnitTestCase {
 			'XML with string and multiple elements and no matching elements' => [null, 'xml', '<body><p>first</p><p>third</p></body>', '//body/p', 'second'],
 			'XML with nested string and single element' => ['Expected to find no elements matching the query "//body/p" with the text "second"', 'xml', '<body><p>sec<i>ond</i></p></body>', '//body/p', 'second'],
 			'XML with nested string and multiple elements and one matching element' => ['Expected to find no elements matching the query "//body/p" with the text "second"', 'xml', '<body><p>first</p><p><i><i>sec</i><i>ond</i></i></p><p>third</p></body>', '//body/p', 'second'],
-			'XML without elements' => [null, 'xml', '<body></body>', '//body/p', 'second'],
+			'XML without elements' => ['Expected to find at least one element matching the query "//body/p"', 'xml', '<body></body>', '//body/p', 'second'],
 			'XML substring match' => [null, 'xml', '<body><p>first second third</p></body>', '//body/p', 'second'],
 		];
 	}

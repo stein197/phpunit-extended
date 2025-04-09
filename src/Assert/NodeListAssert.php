@@ -112,12 +112,13 @@ final readonly class NodeListAssert {
 	 * Assert that at least one element has the given text.
 	 * @param string $text Text to expect.
 	 * @return void
-	 * @throws ExpectationFailedException If there are no elements with the given text.
+	 * @throws ExpectationFailedException If there are no elements with the given text or the elements do not exist.
 	 * ```php
 	 * $this->assertTextEquals('Hello, World!');
 	 * ```
 	 */
 	public function assertTextEquals(string $text): void {
+		$this->assertExists();
 		$this->test->assertContains($text, $this->getTextContent(), "Expected to find at least one element matching the query \"{$this->query}\" with the text \"{$text}\"");
 	}
 
@@ -125,12 +126,13 @@ final readonly class NodeListAssert {
 	 * Assert that no element has the given text.
 	 * @param string $text Text not to expect.
 	 * @return void
-	 * @throws ExpectationFailedException If there is at least one element with the given text.
+	 * @throws ExpectationFailedException If there is at least one element with the given text or the elements do not exist.
 	 * ```php
 	 * $this->assertTextNotEquals('Hello, World!');
 	 * ```
 	 */
 	public function assertTextNotEquals(string $text): void {
+		$this->assertExists();
 		$this->test->assertNotContains($text, $this->getTextContent(), "Expected to find no elements matching the query \"{$this->query}\" with the text \"{$text}\"");
 	}
 
