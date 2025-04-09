@@ -5,7 +5,6 @@ use Dom\Node;
 use Dom\NodeList;
 use PHPUnit\Framework\TestCase;
 
-// TODO: assertTextNotEquals(string $xpath, string $content)
 // TODO: assertContains(string $xpath, string $content)
 // TODO: assertNotContains(string $xpath, string $content)
 // TODO: assertRegexExists(string $xpath, string $regex)
@@ -113,18 +112,26 @@ final readonly class NodeListAssert {
 	 * Assert that at least one element has the given text.
 	 * @param string $text Text to expect.
 	 * @return void
-	 * @throws ExpectationFailedException
-	 * @throws AssertionFailedError If there are no elements that contain the given text.
+	 * @throws ExpectationFailedException If there are no elements with the given text.
 	 * ```php
 	 * $this->assertTextEquals('Hello, World!');
 	 * ```
 	 */
 	public function assertTextEquals(string $text): void {
-		$contents = array_map(
-			fn (Node $node) => $node->textContent,
-			[...$this->nodeList]
-		);
-		$this->test->assertContains($text, $contents, "Expected to find at least one element matching the query \"{$this->query}\" and containing the text \"{$text}\"");
+		$this->test->assertContains($text, $this->getTextContent(), "Expected to find at least one element matching the query \"{$this->query}\" with the text \"{$text}\"");
+	}
+
+	/**
+	 * Assert that no element has the given text.
+	 * @param string $text Text not to expect.
+	 * @return void
+	 * @throws ExpectationFailedException If there is at least one element with the given text.
+	 * ```php
+	 * $this->assertTextNotEquals('Hello, World!');
+	 * ```
+	 */
+	public function assertTextNotEquals(string $text): void {
+		$this->test->assertNotContains($text, $this->getTextContent(), "Expected to find no elements matching the query \"{$this->query}\" with the text \"{$text}\"");
 	}
 
 	private function getChildrenCount(): int {
@@ -137,6 +144,13 @@ final readonly class NodeListAssert {
 			),
 			fn (int $prev, int $cur): int => $prev + $cur,
 			0
+		);
+	}
+
+	private function getTextContent(): array {
+		return array_map(
+			fn (Node $node) => $node->textContent,
+			[...$this->nodeList]
 		);
 	}
 }
