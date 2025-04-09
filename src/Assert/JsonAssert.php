@@ -27,7 +27,8 @@ use function sizeof;
 // TODO: assertObject(string $query)
 // TODO: assertNotObject(string $query)
 // TODO: find(string $query): mixed
-/**\
+// TODO: assert[Not]Equals() should check ALL elements instead of at least single
+/**
  * JSON document assertions by JSONPath queries.
  * @package Stein197\PHPUnit\Assert
  * @internal
