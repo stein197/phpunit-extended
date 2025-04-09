@@ -3,6 +3,12 @@
     "description": "Extended PHPUnit assertions",
     "type": "library",
     "license": "MIT",
+    "scripts": {
+        "test": "@php vendor/bin/phpunit --testdox --colors=always --display-warnings -- test"
+    },
+    "scripts-descriptions": {
+        "test": "Run PHPUnit tests"
+    },
     "autoload": {
         "psr-4": {
             "Stein197\\PHPUnit\\": "src/"

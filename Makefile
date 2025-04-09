@@ -7,4 +7,4 @@ install: # Install the project
 	$(exec) "composer install"
 
 test: # Run PHPUnit tests
-	$(exec) "composer exec phpunit -- --testdox --colors --display-warnings test"
+	$(exec) "composer test"
