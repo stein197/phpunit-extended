@@ -16,6 +16,16 @@ use function sizeof;
 // TODO: assertTextNotMatchesRegex(string $query, string $regex)
 // TODO: assertEmpty(string $query)
 // TODO: assertNotEmpty(string $query)
+// TODO: assertNull(string $query)
+// TODO: assertNotNull(string $query)
+// TODO: assertBoolean(string $query)
+// TODO: assertNotBoolean(string $query)
+// TODO: assertNumber(string $query)
+// TODO: assertNotNumber(string $query)
+// TODO: assertArray(string $query)
+// TODO: assertNotArray(string $query)
+// TODO: assertObject(string $query)
+// TODO: assertNotObject(string $query)
 // TODO: find(string $query): mixed
 /**\
  * JSON document assertions by JSONPath queries.
