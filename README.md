@@ -1,5 +1,5 @@
 # PHPUnit Extended
-This package is a small extension to PHPUnit that extends its assertions. The library provides assertions for PSR-7 HTTP responses, XML/HTML documents and JSON structures. The extension uses the next libraries to make it work:
+This package is a small extension to PHPUnit that extends its assertions. The library provides assertions for PSR-7 HTTP responses, XML/HTML documents and JSON structures. The extension uses the following libraries to make it work:
 - [DOM](https://www.php.net/manual/en/book.dom.php): the new native PHP 8.4 DOM library to make assertions against XML/HTML DOM structures
 - [PSR-7](https://www.php-fig.org/psr/psr-7/): HTTP message interfaces to make assertions against HTTP server response objects
 - [JSONPath](https://github.com/Galbar/JsonPath-PHP): JSONPath library to make assertions against JSON structures
