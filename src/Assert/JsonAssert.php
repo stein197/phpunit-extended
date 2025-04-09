@@ -18,7 +18,6 @@ use function sizeof;
 // TODO: assertTextNotMatchesRegex(string $query, string $regex)
 // TODO: assertEmpty(string $query)
 // TODO: assertNotEmpty(string $query)
-// TODO: assertNotBoolean(string $query)
 // TODO: assertNumber(string $query)
 // TODO: assertNotNumber(string $query)
 // TODO: assertArray(string $query)
@@ -167,6 +166,21 @@ final readonly class JsonAssert {
 	 */
 	public function assertBoolean(string $query): void {
 		$this->assertThatType($query, 'boolean', true);
+	}
+
+	/**
+	 * Assert that none elements at the given JSONPath are boolean.
+	 * @param string $query JSONPath to find elements by.
+	 * @return void
+	 * @throws InvalidJsonPathException
+	 * @throws ExpectationFailedException When JSONPath does not exist or one of the elements is boolean.
+	 * @throws Exception
+	 * ```php
+	 * $this->assertNotBoolean('$.user');
+	 * ```
+	 */
+	public function assertNotBoolean(string $query): void {
+		$this->assertThatType($query, 'boolean', false);
 	}
 
 	private function assertThatType(string $query, string $expectedType, bool $assert): void {

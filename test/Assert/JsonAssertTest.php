@@ -161,6 +161,23 @@ final class JsonAssertTest extends PHPUnitTestCase {
 		];
 	}
 
+	#[Test]
+	#[DataProvider('dataAssertNotBoolean')]
+	#[TestDox('assertNotBoolean()')]
+	public function testAssertNotBoolean(?string $exceptionMessage, string $json, string $query): void {
+		$this->assert($exceptionMessage, $json, static function (JsonAssert $assert) use ($query): void {
+			$assert->assertNotBoolean($query);
+		});
+	}
+
+	public static function dataAssertNotBoolean(): array {
+		return [
+			'passed' => [null, '{"user": [1, 2]}', '$.user[*]'],
+			'failed when JSONPath not exists' => ['Expected to find at least one element matching the JSONPath "$.user[*]"', '{}', '$.user[*]'],
+			'failed when one element is null' => ['Expected all elements not to be boolean for the JSONPath "$.user[*]"', '{"user": [null, false]}', '$.user[*]'],
+		];
+	}
+
 	private function assert(?string $exceptionMessage, string $json, callable $f): void {
 		if ($exceptionMessage) {
 			$this->expectException(AssertionFailedError::class);
