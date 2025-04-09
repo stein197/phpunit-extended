@@ -183,6 +183,36 @@ final readonly class JsonAssert {
 		$this->assertThatType($query, 'boolean', false);
 	}
 
+	/**
+	 * Assert that the values at the given JSONPath to be string.
+	 * @param string $query JSONPath to find elements by.
+	 * @return void
+	 * @throws InvalidJsonPathException
+	 * @throws ExpectationFailedException When JSONPath does not exist or one of the elements is not string.
+	 * @throws Exception
+	 * ```php
+	 * $this->assertString('$.user');
+	 * ```
+	 */
+	public function assertString(string $query): void {
+		$this->assertThatType($query, 'string', true);
+	}
+
+	/**
+	 * Assert that none elements at the given JSONPath are string.
+	 * @param string $query JSONPath to find elements by.
+	 * @return void
+	 * @throws InvalidJsonPathException
+	 * @throws ExpectationFailedException When JSONPath does not exist or one of the elements is string.
+	 * @throws Exception
+	 * ```php
+	 * $this->assertNotString('$.user');
+	 * ```
+	 */
+	public function assertNotString(string $query): void {
+		$this->assertThatType($query, 'string', false);
+	}
+
 	private function assertThatType(string $query, string $expectedType, bool $assert): void {
 		$this->assertExists($query);
 		$elements = $this->json->get($query);

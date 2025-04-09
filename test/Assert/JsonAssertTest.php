@@ -174,7 +174,41 @@ final class JsonAssertTest extends PHPUnitTestCase {
 		return [
 			'passed' => [null, '{"user": [1, 2]}', '$.user[*]'],
 			'failed when JSONPath not exists' => ['Expected to find at least one element matching the JSONPath "$.user[*]"', '{}', '$.user[*]'],
-			'failed when one element is null' => ['Expected all elements not to be boolean for the JSONPath "$.user[*]"', '{"user": [null, false]}', '$.user[*]'],
+			'failed when one element is boolean' => ['Expected all elements not to be boolean for the JSONPath "$.user[*]"', '{"user": [null, false]}', '$.user[*]'],
+		];
+	}
+
+	#[Test]
+	#[DataProvider('dataAssertString')]
+	#[TestDox('assertString()')]
+	public function testAssertString(?string $exceptionMessage, string $json, string $query): void {
+		$this->assert($exceptionMessage, $json, static function (JsonAssert $assert) use ($query): void {
+			$assert->assertString($query);
+		});
+	}
+
+	public static function dataAssertString(): array {
+		return [
+			'passed' => [null, '{"user": ["abc", "def"]}', '$.user[*]'],
+			'failed when JSONPath not exists' => ['Expected to find at least one element matching the JSONPath "$.user[*]"', '{}', '$.user[*]'],
+			'failed when one element not string' => ['Expected all elements to be string for the JSONPath "$.user[*]"', '{"user": ["string", 1]}', '$.user[*]'],
+		];
+	}
+
+	#[Test]
+	#[DataProvider('dataAssertNotString')]
+	#[TestDox('assertNotString()')]
+	public function testAssertNotString(?string $exceptionMessage, string $json, string $query): void {
+		$this->assert($exceptionMessage, $json, static function (JsonAssert $assert) use ($query): void {
+			$assert->assertNotString($query);
+		});
+	}
+
+	public static function dataAssertNotString(): array {
+		return [
+			'passed' => [null, '{"user": [1, 2]}', '$.user[*]'],
+			'failed when JSONPath not exists' => ['Expected to find at least one element matching the JSONPath "$.user[*]"', '{}', '$.user[*]'],
+			'failed when one element is string' => ['Expected all elements not to be string for the JSONPath "$.user[*]"', '{"user": [1, "string"]}', '$.user[*]'],
 		];
 	}
 
