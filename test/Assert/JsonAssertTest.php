@@ -179,6 +179,41 @@ final class JsonAssertTest extends PHPUnitTestCase {
 	}
 
 	#[Test]
+	#[DataProvider('dataAssertNumber')]
+	#[TestDox('assertNumber()')]
+	public function testAssertNumber(?string $exceptionMessage, string $json, string $query): void {
+		$this->assert($exceptionMessage, $json, static function (JsonAssert $assert) use ($query): void {
+			$assert->assertNumber($query);
+		});
+	}
+
+	public static function dataAssertNumber(): array {
+		return [
+			'passed integer' => [null, '{"user": [12, 12.5]}', '$.user[*]'],
+			'failed when JSONPath not exists' => ['Expected to find at least one element matching the JSONPath "$.user[*]"', '{}', '$.user[*]'],
+			'failed when one element not number' => ['Expected all elements to be number for the JSONPath "$.user[*]"', '{"user": ["string", 1]}', '$.user[*]'],
+		];
+	}
+
+	#[Test]
+	#[DataProvider('dataAssertNotNumber')]
+	#[TestDox('assertNotNumber()')]
+	public function testAssertNotNumber(?string $exceptionMessage, string $json, string $query): void {
+		$this->assert($exceptionMessage, $json, static function (JsonAssert $assert) use ($query): void {
+			$assert->assertNotNumber($query);
+		});
+	}
+
+	public static function dataAssertNotNumber(): array {
+		return [
+			'passed' => [null, '{"user": [true, false]}', '$.user[*]'],
+			'failed when JSONPath not exists' => ['Expected to find at least one element matching the JSONPath "$.user[*]"', '{}', '$.user[*]'],
+			'failed when one element is integer' => ['Expected all elements not to be number for the JSONPath "$.user[*]"', '{"user": [null, 1]}', '$.user[*]'],
+			'failed when one element is float' => ['Expected all elements not to be number for the JSONPath "$.user[*]"', '{"user": [null, 1.5]}', '$.user[*]'],
+		];
+	}
+
+	#[Test]
 	#[DataProvider('dataAssertString')]
 	#[TestDox('assertString()')]
 	public function testAssertString(?string $exceptionMessage, string $json, string $query): void {
