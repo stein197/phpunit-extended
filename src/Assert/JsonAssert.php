@@ -7,6 +7,7 @@ use PHPUnit\Framework\Exception;
 use PHPUnit\Framework\ExpectationFailedException;
 use PHPUnit\Framework\TestCase;
 use function array_filter;
+use function array_is_list;
 use function gettype;
 use function json_encode;
 use function sizeof;
@@ -135,7 +136,7 @@ final readonly class JsonAssert {
 	 * ```
 	 */
 	public function assertNull(string $query): void {
-		$this->assertThatType($query, 'NULL', true);
+		$this->assertThatType($query, 'null', true);
 	}
 
 	/**
@@ -150,7 +151,7 @@ final readonly class JsonAssert {
 	 * ```
 	 */
 	public function assertNotNull(string $query): void {
-		$this->assertThatType($query, 'NULL', false);
+		$this->assertThatType($query, 'null', false);
 	}
 
 	/**
@@ -218,11 +219,23 @@ final readonly class JsonAssert {
 		$elements = $this->json->get($query);
 		$filtered = array_filter(
 			$elements,
-			fn (mixed $v): string => gettype($v) === $expectedType
+			fn (mixed $v): string => self::phpToJsonType($v) === $expectedType
 		);
 		if ($assert)
 			$this->test->assertEquals(sizeof($elements), sizeof($filtered), "Expected all elements to be {$expectedType} for the JSONPath \"{$query}\"");
 		else
 			$this->test->assertEmpty($filtered, "Expected all elements not to be {$expectedType} for the JSONPath \"{$query}\"");
+	}
+
+	private static function phpToJsonType(mixed $v): string {
+		$type = gettype($v);
+		return match ($type) {
+			'NULL' => 'null',
+			'boolean' => 'boolean',
+			'integer', 'double' => 'number',
+			'string' => 'string',
+			'array' => array_is_list($v) ? 'array' : 'object',
+			default => $type
+		};
 	}
 }

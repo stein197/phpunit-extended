@@ -123,7 +123,7 @@ final class JsonAssertTest extends PHPUnitTestCase {
 		return [
 			'passed' => [null, '{"user": [null, null]}', '$.user[*]'],
 			'failed when JSONPath not exists' => ['Expected to find at least one element matching the JSONPath "$.user[*]"', '{}', '$.user[*]'],
-			'failed when one element not null' => ['Expected all elements to be NULL for the JSONPath "$.user[*]"', '{"user": [null, 1]}', '$.user[*]'],
+			'failed when one element not null' => ['Expected all elements to be null for the JSONPath "$.user[*]"', '{"user": [null, 1]}', '$.user[*]'],
 		];
 	}
 
@@ -140,7 +140,7 @@ final class JsonAssertTest extends PHPUnitTestCase {
 		return [
 			'passed' => [null, '{"user": [1, 2]}', '$.user[*]'],
 			'failed when JSONPath not exists' => ['Expected to find at least one element matching the JSONPath "$.user[*]"', '{}', '$.user[*]'],
-			'failed when one element is null' => ['Expected all elements not to be NULL for the JSONPath "$.user[*]"', '{"user": [null, 1]}', '$.user[*]'],
+			'failed when one element is null' => ['Expected all elements not to be null for the JSONPath "$.user[*]"', '{"user": [null, 1]}', '$.user[*]'],
 		];
 	}
 
