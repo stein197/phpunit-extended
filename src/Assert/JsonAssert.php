@@ -7,7 +7,6 @@ use PHPUnit\Framework\Exception;
 use PHPUnit\Framework\ExpectationFailedException;
 use PHPUnit\Framework\TestCase;
 use function array_filter;
-use function array_map;
 use function gettype;
 use function json_encode;
 use function sizeof;
@@ -19,7 +18,6 @@ use function sizeof;
 // TODO: assertTextNotMatchesRegex(string $query, string $regex)
 // TODO: assertEmpty(string $query)
 // TODO: assertNotEmpty(string $query)
-// TODO: assertNotNull(string $query)
 // TODO: assertBoolean(string $query)
 // TODO: assertNotBoolean(string $query)
 // TODO: assertNumber(string $query)
@@ -140,6 +138,21 @@ final readonly class JsonAssert {
 	 */
 	public function assertNull(string $query): void {
 		$this->assertThatType($query, 'NULL', true);
+	}
+
+	/**
+	 * Assert that none elements at the given JSONPath are null.
+	 * @param string $query JSONPath to find elements by.
+	 * @return void
+	 * @throws InvalidJsonPathException
+	 * @throws ExpectationFailedException When JSONPath does not exist or one of the elements is null.
+	 * @throws Exception
+	 * ```php
+	 * $this->assertNotNull('$.user');
+	 * ```
+	 */
+	public function assertNotNull(string $query): void {
+		$this->assertThatType($query, 'NULL', false);
 	}
 
 	private function assertThatType(string $query, string $expectedType, bool $assert): void {
