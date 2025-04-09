@@ -6,6 +6,9 @@ use JsonPath\JsonObject;
 use PHPUnit\Framework\Exception;
 use PHPUnit\Framework\ExpectationFailedException;
 use PHPUnit\Framework\TestCase;
+use function array_filter;
+use function array_map;
+use function gettype;
 use function json_encode;
 use function sizeof;
 
@@ -16,7 +19,6 @@ use function sizeof;
 // TODO: assertTextNotMatchesRegex(string $query, string $regex)
 // TODO: assertEmpty(string $query)
 // TODO: assertNotEmpty(string $query)
-// TODO: assertNull(string $query)
 // TODO: assertNotNull(string $query)
 // TODO: assertBoolean(string $query)
 // TODO: assertNotBoolean(string $query)
@@ -123,5 +125,33 @@ final readonly class JsonAssert {
 		$this->assertExists($query);
 		$elements = $this->json->get($query) ?: [];
 		$this->test->assertNotContains($value, $elements, 'Expected to find none elements with the exact value ' . json_encode($value) . " matching the JSONPath \"{$query}\"");
+	}
+
+	/**
+	 * Assert that the values at the given JSONPath to be null.
+	 * @param string $query JSONPath to find elements by.
+	 * @return void
+	 * @throws InvalidJsonPathException
+	 * @throws ExpectationFailedException When JSONPath does not exist or one of the elements is not null.
+	 * @throws Exception
+	 * ```php
+	 * $this->assertNull('$.user');
+	 * ```
+	 */
+	public function assertNull(string $query): void {
+		$this->assertThatType($query, 'NULL', true);
+	}
+
+	private function assertThatType(string $query, string $expectedType, bool $assert): void {
+		$this->assertExists($query);
+		$elements = $this->json->get($query);
+		$filtered = array_filter(
+			$elements,
+			fn (mixed $v): string => gettype($v) === $expectedType
+		);
+		if ($assert)
+			$this->test->assertEquals(sizeof($elements), sizeof($filtered), "Expected all elements to be {$expectedType} for the JSONPath \"{$query}\"");
+		else
+			$this->test->assertEmpty($filtered, "Expected all elements not to be {$expectedType} for the JSONPath \"{$query}\"");
 	}
 }

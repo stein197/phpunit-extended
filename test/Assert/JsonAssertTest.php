@@ -110,6 +110,23 @@ final class JsonAssertTest extends PHPUnitTestCase {
 		];
 	}
 
+	#[Test]
+	#[DataProvider('dataAssertNull')]
+	#[TestDox('assertNull()')]
+	public function testAssertNull(?string $exceptionMessage, string $json, string $query): void {
+		$this->assert($exceptionMessage, $json, static function (JsonAssert $assert) use ($query): void {
+			$assert->assertNull($query);
+		});
+	}
+
+	public static function dataAssertNull(): array {
+		return [
+			'passed' => [null, '{"user": [null, null]}', '$.user[*]'],
+			'failed when JSONPath not exists' => ['Expected to find at least one element matching the JSONPath "$.user[*]"', '{}', '$.user[*]'],
+			'failed when one element not null' => ['Expected all elements to be NULL for the JSONPath "$.user[*]"', '{"user": [null, 1]}', '$.user[*]'],
+		];
+	}
+
 	private function assert(?string $exceptionMessage, string $json, callable $f): void {
 		if ($exceptionMessage) {
 			$this->expectException(AssertionFailedError::class);
