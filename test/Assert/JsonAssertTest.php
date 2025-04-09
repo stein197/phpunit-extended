@@ -62,6 +62,34 @@ final class JsonAssertTest extends PHPUnitTestCase {
 		];
 	}
 
+	#[Test]
+	#[DataProvider('dataAssertEquals')]
+	#[TestDox('assertEquals()')]
+	public function testAssertEquals(?string $exceptionMessage, string $json, string $query, mixed $value): void {
+		$this->assert($exceptionMessage, $json, static function (JsonAssert $assert) use ($query, $value): void {
+			$assert->assertEquals($query, $value);
+		});
+	}
+
+	public static function dataAssertEquals(): array {
+		return [
+			'passed when null and one element matches the query' => [null, '{"user": null}', '$.user', null],
+			'passed when boolean and one element matches the query' => [null, '{"user": false}', '$.user', false],
+			'passed when number and one element matches the query' => [null, '{"user": 12}', '$.user', 12],
+			'passed when string and one element matches the query' => [null, '{"user": "string"}', '$.user', 'string'],
+			'passed when array and one element matches the query' => [null, '{"user": [null, false, 12, "string", [], {}]}', '$.user', [null, false, 12, "string", [], []]],
+			'passed when object and one element matches the query' => [null, '{"user": {"age": 12}}', '$.user', ['age' => 12]],
+			'passed when null and more elements match the query' => [null, '{"user": [1, 2, null, 3]}', '$.user[*]', null],
+			'passed when boolean and more elements match the query' => [null, '{"user": [1, 2, false, 3]}', '$.user[*]', false],
+			'passed when number and more elements match the query' => [null, '{"user": [1, 2, 12, 3]}', '$.user[*]', 12],
+			'passed when string and more elements match the query' => [null, '{"user": [1, 2, "string", 3]}', '$.user[*]', 'string'],
+			'passed when array and more elements match the query' => [null, '{"user": [1, 2, [null, false, 12, "string", [], {}], 3]}', '$.user[*]', [null, false, 12, "string", [], []]],
+			'passed when object and more elements match the query' => [null, '{"user": [1, 2, {"age": 12}, 3]}', '$.user[*]', ['age' => 12]],
+			'failed when JSONPath not exists' => ['Expected to find at least one element matching the JSONPath "$.user"', '{}', '$.user', null],
+			'failed when JSONPath exists and no elements match' => ['Expected to find at least one element with the exact value \'{"age":12}\' matching the JSONPath "$.user"', '{"user": {"age": 12, "name": "John"}}', '$.user', ['age' => 12]],
+		];
+	}
+
 	private function assert(?string $exceptionMessage, string $json, callable $f): void {
 		if ($exceptionMessage) {
 			$this->expectException(AssertionFailedError::class);
