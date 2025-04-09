@@ -79,14 +79,34 @@ final class JsonAssertTest extends PHPUnitTestCase {
 			'passed when string and one element matches the query' => [null, '{"user": "string"}', '$.user', 'string'],
 			'passed when array and one element matches the query' => [null, '{"user": [null, false, 12, "string", [], {}]}', '$.user', [null, false, 12, "string", [], []]],
 			'passed when object and one element matches the query' => [null, '{"user": {"age": 12}}', '$.user', ['age' => 12]],
-			'passed when null and more elements match the query' => [null, '{"user": [1, 2, null, 3]}', '$.user[*]', null],
-			'passed when boolean and more elements match the query' => [null, '{"user": [1, 2, false, 3]}', '$.user[*]', false],
-			'passed when number and more elements match the query' => [null, '{"user": [1, 2, 12, 3]}', '$.user[*]', 12],
-			'passed when string and more elements match the query' => [null, '{"user": [1, 2, "string", 3]}', '$.user[*]', 'string'],
-			'passed when array and more elements match the query' => [null, '{"user": [1, 2, [null, false, 12, "string", [], {}], 3]}', '$.user[*]', [null, false, 12, "string", [], []]],
-			'passed when object and more elements match the query' => [null, '{"user": [1, 2, {"age": 12}, 3]}', '$.user[*]', ['age' => 12]],
+			'passed when null and many elements match the query' => [null, '{"user": [1, 2, null, 3]}', '$.user[*]', null],
+			'passed when boolean and many elements match the query' => [null, '{"user": [1, 2, false, 3]}', '$.user[*]', false],
+			'passed when number and many elements match the query' => [null, '{"user": [1, 2, 12, 3]}', '$.user[*]', 12],
+			'passed when string and many elements match the query' => [null, '{"user": [1, 2, "string", 3]}', '$.user[*]', 'string'],
+			'passed when array and many elements match the query' => [null, '{"user": [1, 2, [null, false, 12, "string", [], {}], 3]}', '$.user[*]', [null, false, 12, "string", [], []]],
+			'passed when object and many elements match the query' => [null, '{"user": [1, 2, {"age": 12}, 3]}', '$.user[*]', ['age' => 12]],
 			'failed when JSONPath not exists' => ['Expected to find at least one element matching the JSONPath "$.user"', '{}', '$.user', null],
-			'failed when JSONPath exists and no elements match' => ['Expected to find at least one element with the exact value \'{"age":12}\' matching the JSONPath "$.user"', '{"user": {"age": 12, "name": "John"}}', '$.user', ['age' => 12]],
+			'failed when one element matches JSONPath and no elements equal' => ['Expected to find at least one element with the exact value {"age":12} matching the JSONPath "$.user"', '{"user": {"age": 12, "name": "John"}}', '$.user', ['age' => 12]],
+			'failed when many elements match JSONPath and no elements equal' => ['Expected to find at least one element with the exact value {"age":12} matching the JSONPath "$.user[*]"', '{"user": [{}, {"age": 12, "name": "John"}]}', '$.user[*]', ['age' => 12]],
+		];
+	}
+
+	#[Test]
+	#[DataProvider('dataAssertNotEquals')]
+	#[TestDox('assertNotEquals()')]
+	public function testAssertNotEquals(?string $exceptionMessage, string $json, string $query, mixed $value): void {
+		$this->assert($exceptionMessage, $json, static function (JsonAssert $assert) use ($query, $value): void {
+			$assert->assertNotEquals($query, $value);
+		});
+	}
+
+	public static function dataAssertNotEquals(): array {
+		return [
+			'passed when one element matches the query' => [null, '{"user": "abc"}', '$.user', 'def'],
+			'passed when many elements match the query' => [null, '{"user": ["abc", "def"]}', '$.user[*]', 'ghi'],
+			'failed when JSONPath not exists' => ['Expected to find at least one element matching the JSONPath "$.user"', '{}', '$.user', null],
+			'failed when one element matches JSONPath and one element is equal' => ['Expected to find none elements with the exact value "string" matching the JSONPath "$.user"', '{"user": "string"}', '$.user', 'string'],
+			'failed when one element matches JSONPath and many elements are equal' => ['Expected to find none elements with the exact value "string" matching the JSONPath "$.user[*]"', '{"user": ["first", "string"]}', '$.user[*]', 'string'],
 		];
 	}
 

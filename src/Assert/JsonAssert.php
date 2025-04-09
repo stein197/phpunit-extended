@@ -8,14 +8,12 @@ use PHPUnit\Framework\ExpectationFailedException;
 use PHPUnit\Framework\TestCase;
 use function json_encode;
 use function sizeof;
-use function var_export;
 
 // TODO: assertPartial(array $expected)
 // TODO: assertContains(string $query, mixed | array $partial)
 // TODO: assertNotContains(string $query, mixed | array $partial)
 // TODO: assertTextMatchesRegex(string $query, string $regex)
 // TODO: assertTextNotMatchesRegex(string $query, string $regex)
-// TODO: assertNotEquals(string $query, mixed $value)
 // TODO: assertEmpty(string $query)
 // TODO: assertNotEmpty(string $query)
 // TODO: find(string $query): mixed
@@ -87,7 +85,7 @@ final readonly class JsonAssert {
 	 * @return void
 	 * @throws InvalidJsonPathException When JSON is invalid.
 	 * @throws Exception
-	 * @throws ExpectationFailedException When JSONPath does not exists or the value is not equal to the passed one.
+	 * @throws ExpectationFailedException When JSONPath does not exist or none of the values equal to the passed one.
 	 * ```php
 	 * $this->assertEquals('$.user', ['name' => 'John']);
 	 * ```
@@ -95,6 +93,24 @@ final readonly class JsonAssert {
 	public function assertEquals(string $query, mixed $value): void {
 		$this->assertExists($query);
 		$elements = $this->json->get($query) ?: [];
-		$this->test->assertContains($value, $elements, 'Expected to find at least one element with the exact value ' . var_export(json_encode($value), true) . " matching the JSONPath \"{$query}\"");
+		$this->test->assertContains($value, $elements, 'Expected to find at least one element with the exact value ' . json_encode($value) . " matching the JSONPath \"{$query}\"");
+	}
+
+	/**
+	 * Assert that the value at the given JSONPath is not equal to the passed one.
+	 * @param string $query JSONPath to find elements by.
+	 * @param mixed $value Not expected value.
+	 * @return void
+	 * @throws InvalidJsonPathException When JSON is invalid.
+	 * @throws Exception
+	 * @throws ExpectationFailedException When JSONPath does not exist or one of the elements equal to the passed one.
+	 * ```php
+	 * $this->assertNotEquals('$.user', ['name' => 'John']);
+	 * ```
+	 */
+	public function assertNotEquals(string $query, mixed $value): void {
+		$this->assertExists($query);
+		$elements = $this->json->get($query) ?: [];
+		$this->test->assertNotContains($value, $elements, 'Expected to find none elements with the exact value ' . json_encode($value) . " matching the JSONPath \"{$query}\"");
 	}
 }
