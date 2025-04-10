@@ -3,10 +3,11 @@ namespace Stein197\PHPUnit\Assert;
 
 use Dom\Node;
 use Dom\NodeList;
+use PHPUnit\Framework\ExpectationFailedException;
+use PHPUnit\Framework\AssertionFailedError;
 use PHPUnit\Framework\TestCase;
+use function str_contains;
 
-// TODO: assertContains(string $xpath, string $content)
-// TODO: assertNotContains(string $xpath, string $content)
 // TODO: assertRegexExists(string $xpath, string $regex)
 // TODO: assertRegexNotExists(string $xpath, string $regex)
 /**
@@ -134,6 +135,40 @@ final readonly class NodeListAssert {
 	public function assertTextNotEquals(string $text): void {
 		$this->assertExists();
 		$this->test->assertNotContains($text, $this->getTextContent(), "Expected to find no elements matching the query \"{$this->query}\" with the text \"{$text}\"");
+	}
+
+	/**
+	 * Assert that at least one element contains the given substring.
+	 * @param string $text Substring to expect.
+	 * @return void
+	 * @throws AssertionFailedError When there are no nodes in the list or no elements contain the given substring.
+	 * ```php
+	 * $this->assertTextContains('substring');
+	 * ```
+	 */
+	public function assertTextContains(string $text): void {
+		$this->assertExists();
+		foreach ($this->getTextContent() as $content)
+			if (str_contains($content, $text)) {
+				$this->test->assertTrue(true);
+				return;
+			}
+		$this->test->fail("Expected to find at least one element matching the query \"{$this->query}\" containing the text \"{$text}\"");
+	}
+
+	/**
+	 * Assert that at no elements contain the given substring.
+	 * @param string $text Substring not to expect.
+	 * @return void
+	 * @throws AssertionFailedError When there are no nodes in the list or one element contains the given substring.
+	 * ```php
+	 * $this->assertTextNotContains('substring');
+	 * ```
+	 */
+	public function assertTextNotContains(string $text): void {
+		$this->assertExists();
+		foreach ($this->getTextContent() as $content)
+			$this->test->assertStringNotContainsString($text, $content, "Expected to find no elements matching the query \"{$this->query}\" containing the text \"{$text}\"");
 	}
 
 	private function getChildrenCount(): int {

@@ -197,6 +197,52 @@ final class NodeListAssertTest extends PHPUnitTestCase {
 		];
 	}
 
+	#[Test]
+	#[DataProvider('dataAssertTextContains')]
+	#[TestDox('assertTextContains()')]
+	public function testAssertTextContains(?string $exceptionMessage, string $format, string $content, string $query, string $text): void {
+		$this->assert($exceptionMessage, $format, $content, $query, static function (NodeListAssert $assert) use ($text): void {
+			$assert->assertTextContains($text);
+		});
+	}
+
+	public static function dataAssertTextContains(): array {
+		return [
+			'HTML passed with empty string' => [null, 'html', '<!DOCTYPE html><body><p></p></body>', 'body > p', ''],
+			'HTML passed with string' => [null, 'html', '<!DOCTYPE html><body><p>string</p></body>', 'body > p', 'str'],
+			'HTML passed with string and nested elements' => [null, 'html', '<!DOCTYPE html><body><p><i>str</i><i>ing</i></p></body>', 'body > p', 'trin'],
+			'HTML failed when no elements' => ['Expected to find at least one element matching the query "body > p"', 'html', '<!DOCTYPE html><body></body>', 'body > p', ''],
+			'HTML failed when no match' => ['Expected to find at least one element matching the query "body > p" containing the text "strings"', 'html', '<!DOCTYPE html><body><p>string</p></body>', 'body > p', 'strings'],
+			'XML passed with empty string' => [null, 'xml', '<body><p></p></body>', '//body//p', ''],
+			'XML passed with string' => [null, 'xml', '<body><p>string</p></body>', '//body//p', 'str'],
+			'XML passed with string and nested elements' => [null, 'xml', '<body><p><i>str</i><i>ing</i></p></body>', '//body//p', 'trin'],
+			'XML failed when no elements' => ['Expected to find at least one element matching the query "//body//p"', 'xml', '<body></body>', '//body//p', ''],
+			'XML failed when no match' => ['Expected to find at least one element matching the query "//body//p" containing the text "strings"', 'xml', '<body><p>string</p></body>', '//body//p', 'strings'],
+		];
+	}
+
+	#[Test]
+	#[DataProvider('dataAssertTextNotContains')]
+	#[TestDox('assertTextNotContains()')]
+	public function testAssertTextNotContains(?string $exceptionMessage, string $format, string $content, string $query, string $text): void {
+		$this->assert($exceptionMessage, $format, $content, $query, static function (NodeListAssert $assert) use ($text): void {
+			$assert->assertTextNotContains($text);
+		});
+	}
+
+	public static function dataAssertTextNotContains(): array {
+		return [
+			'HTML passed when no match' => [null, 'html', '<!DOCTYPE html><body><p>string</p></body>', 'body > p', 'STRING'],
+			'HTML failed when no elements' => ['Expected to find at least one element matching the query "body > p"', 'html', '<!DOCTYPE html><body></body>', 'body > p', ''],
+			'HTML failed when there is match' => ['Expected to find no elements matching the query "body > p" containing the text "string"', 'html', '<!DOCTYPE html><body><p>string</p></body>', 'body > p', 'string'],
+			'HTML failed when string is empty' => ['Expected to find no elements matching the query "body > p" containing the text ""', 'html', '<!DOCTYPE html><body><p>string</p></body>', 'body > p', ''],
+			'XML passed when no match' => [null, 'xml', '<body><p>string</p></body>', '//body/p', 'STRING'],
+			'XML failed when no elements' => ['Expected to find at least one element matching the query "//body/p"', 'xml', '<body></body>', '//body/p', ''],
+			'XML failed when there is match' => ['Expected to find no elements matching the query "//body/p" containing the text "string"', 'xml', '<body><p>string</p></body>', '//body/p', 'string'],
+			'XML failed when string is empty' => ['Expected to find no elements matching the query "//body/p" containing the text ""', 'xml', '<body><p>string</p></body>', '//body/p', ''],
+		];
+	}
+
 	private function assert(?string $exceptionMessage, string $format, string $content, string $query, callable $f): void {
 		if ($exceptionMessage) {
 			$this->expectException(AssertionFailedError::class);
