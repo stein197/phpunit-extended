@@ -5,6 +5,7 @@ use Dom\HTMLDocument;
 use Dom\XMLDocument;
 use JsonPath\InvalidJsonException;
 use JsonPath\JsonObject;
+use PHPUnit\Framework\ExpectationFailedException;
 use Psr\Http\Message\ResponseInterface;
 use Stein197\PHPUnit\Assert\DocumentAssert;
 use Stein197\PHPUnit\Assert\JsonAssert;
@@ -46,5 +47,14 @@ trait TestCase {
 	 */
 	public function xml(string $xml): DocumentAssert {
 		return new DocumentAssert($this, XMLDocument::createFromString($xml));
+	}
+
+	/**
+	 * @inheritdoc
+	 */
+	public function pass(): void {
+		try {
+			$this->assertTrue(true);
+		} catch (ExpectationFailedException $ex) {}
 	}
 }

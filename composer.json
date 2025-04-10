@@ -4,7 +4,7 @@
     "type": "library",
     "license": "MIT",
     "scripts": {
-        "test": "@php vendor/bin/phpunit --testdox --colors=always --display-warnings -- test"
+        "test": "@php vendor/bin/phpunit --testdox --colors=always --display-warnings --fail-on-risky -- test"
     },
     "scripts-descriptions": {
         "test": "Run PHPUnit tests"

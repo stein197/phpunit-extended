@@ -50,4 +50,10 @@ interface ExtendedTestCase {
 	 * ```
 	 */
 	public function xml(string $xml): DocumentAssert;
+
+	/**
+	 * Mark test as passed.
+	 * @return void
+	 */
+	public function pass(): void;
 }
