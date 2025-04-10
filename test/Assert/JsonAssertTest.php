@@ -31,6 +31,40 @@ final class JsonAssertTest extends PHPUnitTestCase {
 	}
 
 	#[Test]
+	#[DataProvider('dataAssertEmpty')]
+	#[TestDox('assertEmpty()')]
+	public function testAssertEmpty(?string $exceptionMessage, string $json, string $query): void {
+		$this->assert($exceptionMessage, $json, static function (JsonAssert $assert) use ($query): void {
+			$assert->assertEmpty($query);
+		});
+	}
+
+	public static function dataAssertEmpty(): array {
+		return [
+			'passed' => [null, '{"user": [null, false, 0, "", [], {}]}', '$.user[*]'],
+			'failed' => ['Expected to find an empty element at position 4 matching the JSONPath "$.user[*]", actual: [null]', '{"user": [null, false, 0, "", [null], {}]}', '$.user[*]'],
+			'failed and JSONPath not exists' => ['Expected to find at least one element matching the JSONPath "$.user[*]"', '{}', '$.user[*]'],
+		];
+	}
+
+	#[Test]
+	#[DataProvider('dataAssertNotEmpty')]
+	#[TestDox('assertNotEmpty()')]
+	public function testAssertNotEmpty(?string $exceptionMessage, string $json, string $query): void {
+		$this->assert($exceptionMessage, $json, static function (JsonAssert $assert) use ($query): void {
+			$assert->assertNotEmpty($query);
+		});
+	}
+
+	public static function dataAssertNotEmpty(): array {
+		return [
+			'passed' => [null, '{"user": [true, 1, "string", [null], {"a": 1}]}', '$.user[*]'],
+			'failed' => ['Expected to find a non-empty element at position 2 matching the JSONPath "$.user[*]", actual: ""', '{"user": [true, 1, "", [null], {"a": 1}]}', '$.user[*]'],
+			'failed and JSONPath not exists' => ['Expected to find at least one element matching the JSONPath "$.user[*]"', '{}', '$.user[*]'],
+		];
+	}
+
+	#[Test]
 	#[DataProvider('dataAssertExists')]
 	#[TestDox('assertExists()')]
 	public function testAssertExists(?string $exceptionMessage, string $json, string $query): void {

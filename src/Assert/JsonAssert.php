@@ -5,6 +5,7 @@ use JsonPath\InvalidJsonPathException;
 use JsonPath\JsonObject;
 use PHPUnit\Framework\Exception;
 use PHPUnit\Framework\ExpectationFailedException;
+use PHPUnit\Framework\GeneratorNotSupportedException;
 use PHPUnit\Framework\TestCase;
 use function array_filter;
 use function array_is_list;
@@ -17,8 +18,6 @@ use function sizeof;
 // TODO: assertNotContains(string $query, mixed | array $partial)
 // TODO: assertTextMatchesRegex(string $query, string $regex)
 // TODO: assertTextNotMatchesRegex(string $query, string $regex)
-// TODO: assertEmpty(string $query)
-// TODO: assertNotEmpty(string $query)
 // TODO: assertArray(string $query)
 // TODO: assertNotArray(string $query)
 // TODO: assertObject(string $query)
@@ -46,7 +45,7 @@ final readonly class JsonAssert {
 	 * @param string $query JSONPath to find elements by.
 	 * @param int $expectedCount Expected amount of elements to find.
 	 * @return void
-	 * @throws InvalidJsonPathException
+	 * @throws InvalidJsonPathException When JSONPath is invalid.
 	 * @throws ExpectationFailedException If the amount of the found elements is not equal to the `$expectedCount`.
 	 * ```php
 	 * $this->assertCount('$.user', 10);
@@ -58,10 +57,38 @@ final readonly class JsonAssert {
 	}
 
 	/**
+	 * Assert that elements at the given JSONPath are null, false, 0, "", [] or {}.
+	 * @param string $query JSONPath to find elements by.
+	 * @return void
+	 * @throws InvalidJsonPathException When JSONPath is invalid.
+	 * @throws ExpectationFailedException When the JSONPath does not exist or one of the elements is not null, false, 0, "", [] or {}.
+	 * @throws GeneratorNotSupportedException
+	 */
+	public function assertEmpty(string $query): void {
+		$this->assertExists($query);
+		foreach ($this->json->get($query) as $i => $item)
+			$this->test->assertEmpty($item, "Expected to find an empty element at position {$i} matching the JSONPath \"{$query}\", actual: " . json_encode($item));
+	}
+
+	/**
+	 * Assert that elements at the given JSONPath are not null, false, 0, "", [] or {}.
+	 * @param string $query JSONPath to find elements by.
+	 * @return void
+	 * @throws InvalidJsonPathException When JSONPath is invalid.
+	 * @throws ExpectationFailedException When the JSONPath does not exist or one of the elements is null, false, 0, "", [] or {}.
+	 * @throws GeneratorNotSupportedException
+	 */
+	public function assertNotEmpty(string $query): void {
+		$this->assertExists($query);
+		foreach ($this->json->get($query) as $i => $item)
+			$this->test->assertNotEmpty($item, "Expected to find a non-empty element at position {$i} matching the JSONPath \"{$query}\", actual: " . json_encode($item));
+	}
+
+	/**
 	 * Assert that there is at least one element matching the `$query`.
 	 * @param string $query JSONPath to find elements by.
 	 * @return void
-	 * @throws InvalidJsonPathException
+	 * @throws InvalidJsonPathException When JSONPath is invalid.
 	 * @throws ExpectationFailedException If there are no elements matching the given query.
 	 * ```php
 	 * $this->assertExists('$.user');
@@ -76,7 +103,7 @@ final readonly class JsonAssert {
 	 * Assert that there are no elements matching the `$query`.
 	 * @param string $query JSONPath to find elements by.
 	 * @return void
-	 * @throws InvalidJsonPathException
+	 * @throws InvalidJsonPathException When JSONPath is invalid.
 	 * @throws ExpectationFailedException If there is at least one element matching the given query.
 	 * ```php
 	 * $this->assertNotExists('$.user');
@@ -91,7 +118,7 @@ final readonly class JsonAssert {
 	 * @param string $query JSONPath to find elements by.
 	 * @param mixed $value Expected value.
 	 * @return void
-	 * @throws InvalidJsonPathException When JSON is invalid.
+	 * @throws InvalidJsonPathException When JSONPath is invalid.
 	 * @throws Exception
 	 * @throws ExpectationFailedException When JSONPath does not exist or none of the values equal to the passed one.
 	 * ```php
@@ -109,7 +136,7 @@ final readonly class JsonAssert {
 	 * @param string $query JSONPath to find elements by.
 	 * @param mixed $value Not expected value.
 	 * @return void
-	 * @throws InvalidJsonPathException When JSON is invalid.
+	 * @throws InvalidJsonPathException When JSONPath is invalid.
 	 * @throws Exception
 	 * @throws ExpectationFailedException When JSONPath does not exist or one of the elements equal to the passed one.
 	 * ```php
@@ -126,7 +153,7 @@ final readonly class JsonAssert {
 	 * Assert that the values at the given JSONPath to be null.
 	 * @param string $query JSONPath to find elements by.
 	 * @return void
-	 * @throws InvalidJsonPathException
+	 * @throws InvalidJsonPathException When JSONPath is invalid.
 	 * @throws ExpectationFailedException When JSONPath does not exist or one of the elements is not null.
 	 * @throws Exception
 	 * ```php
@@ -141,7 +168,7 @@ final readonly class JsonAssert {
 	 * Assert that none elements at the given JSONPath are null.
 	 * @param string $query JSONPath to find elements by.
 	 * @return void
-	 * @throws InvalidJsonPathException
+	 * @throws InvalidJsonPathException When JSONPath is invalid.
 	 * @throws ExpectationFailedException When JSONPath does not exist or one of the elements is null.
 	 * @throws Exception
 	 * ```php
@@ -156,7 +183,7 @@ final readonly class JsonAssert {
 	 * Assert that the values at the given JSONPath to be boolean.
 	 * @param string $query JSONPath to find elements by.
 	 * @return void
-	 * @throws InvalidJsonPathException
+	 * @throws InvalidJsonPathException When JSONPath is invalid.
 	 * @throws ExpectationFailedException When JSONPath does not exist or one of the elements is not boolean.
 	 * @throws Exception
 	 * ```php
@@ -171,7 +198,7 @@ final readonly class JsonAssert {
 	 * Assert that none elements at the given JSONPath are boolean.
 	 * @param string $query JSONPath to find elements by.
 	 * @return void
-	 * @throws InvalidJsonPathException
+	 * @throws InvalidJsonPathException When JSONPath is invalid.
 	 * @throws ExpectationFailedException When JSONPath does not exist or one of the elements is boolean.
 	 * @throws Exception
 	 * ```php
@@ -186,7 +213,7 @@ final readonly class JsonAssert {
 	 * Assert that the values at the given JSONPath to be number.
 	 * @param string $query JSONPath to find elements by.
 	 * @return void
-	 * @throws InvalidJsonPathException
+	 * @throws InvalidJsonPathException When JSONPath is invalid.
 	 * @throws ExpectationFailedException When JSONPath does not exist or one of the elements is not number.
 	 * @throws Exception
 	 * ```php
@@ -201,7 +228,7 @@ final readonly class JsonAssert {
 	 * Assert that none elements at the given JSONPath are number.
 	 * @param string $query JSONPath to find elements by.
 	 * @return void
-	 * @throws InvalidJsonPathException
+	 * @throws InvalidJsonPathException When JSONPath is invalid.
 	 * @throws ExpectationFailedException When JSONPath does not exist or one of the elements is number.
 	 * @throws Exception
 	 * ```php
@@ -216,7 +243,7 @@ final readonly class JsonAssert {
 	 * Assert that the values at the given JSONPath to be string.
 	 * @param string $query JSONPath to find elements by.
 	 * @return void
-	 * @throws InvalidJsonPathException
+	 * @throws InvalidJsonPathException When JSONPath is invalid.
 	 * @throws ExpectationFailedException When JSONPath does not exist or one of the elements is not string.
 	 * @throws Exception
 	 * ```php
@@ -231,7 +258,7 @@ final readonly class JsonAssert {
 	 * Assert that none elements at the given JSONPath are string.
 	 * @param string $query JSONPath to find elements by.
 	 * @return void
-	 * @throws InvalidJsonPathException
+	 * @throws InvalidJsonPathException When JSONPath is invalid.
 	 * @throws ExpectationFailedException When JSONPath does not exist or one of the elements is string.
 	 * @throws Exception
 	 * ```php
