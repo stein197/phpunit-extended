@@ -18,8 +18,6 @@ use function sizeof;
 // TODO: assertNotContains(string $query, mixed | array $partial)
 // TODO: assertTextMatchesRegex(string $query, string $regex)
 // TODO: assertTextNotMatchesRegex(string $query, string $regex)
-// TODO: assertArray(string $query)
-// TODO: assertNotArray(string $query)
 // TODO: assertObject(string $query)
 // TODO: assertNotObject(string $query)
 // TODO: find(string $query): mixed
@@ -267,6 +265,30 @@ final readonly class JsonAssert {
 	 */
 	public function assertNotString(string $query): void {
 		$this->assertThatType($query, 'string', false);
+	}
+
+	/**
+	 * Assert that the elements at the given JSONPath to be array.
+	 * @param string $query JSONPath to find elements by.
+	 * @return void
+	 * @throws InvalidJsonPathException When JSONPath is invalid.
+	 * @throws ExpectationFailedException When JSONPath does not exist or one of the elements is not array.
+	 * @throws GeneratorNotSupportedException
+	 */
+	public function assertArray(string $query): void {
+		$this->assertThatType($query, 'array', true);
+	}
+
+	/**
+	 * Assert that none elements at the given JSONPath are array.
+	 * @param string $query JSONPath to find elements by.
+	 * @return void
+	 * @throws InvalidJsonPathException When JSONPath is invalid.
+	 * @throws ExpectationFailedException When JSONPath does not exist or one of the elements is array.
+	 * @throws GeneratorNotSupportedException
+	 */
+	public function assertNotArray(string $query): void {
+		$this->assertThatType($query, 'array', false);
 	}
 
 	private function assertThatType(string $query, string $expectedType, bool $assert): void {

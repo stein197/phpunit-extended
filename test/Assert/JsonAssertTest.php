@@ -281,6 +281,40 @@ final class JsonAssertTest extends PHPUnitTestCase {
 		];
 	}
 
+	#[Test]
+	#[DataProvider('dataAssertArray')]
+	#[TestDox('assertArray()')]
+	public function testAssertArray(?string $exceptionMessage, string $json, string $query): void {
+		$this->assert($exceptionMessage, $json, static function (JsonAssert $assert) use ($query): void {
+			$assert->assertArray($query);
+		});
+	}
+
+	public static function dataAssertArray(): array {
+		return [
+			'passed' => [null, '{"user": [[], [null]]}', '$.user[*]'],
+			'failed when JSONPath not exists' => ['Expected to find at least one element matching the JSONPath "$.user[*]"', '{}', '$.user[*]'],
+			'failed when one element not array' => ['Expected all elements to be array for the JSONPath "$.user[*]"', '{"user": [[], "string"]}', '$.user[*]'],
+		];
+	}
+
+	#[Test]
+	#[DataProvider('dataAssertNotArray')]
+	#[TestDox('assertNotArray()')]
+	public function testAssertNotArray(?string $exceptionMessage, string $json, string $query): void {
+		$this->assert($exceptionMessage, $json, static function (JsonAssert $assert) use ($query): void {
+			$assert->assertNotArray($query);
+		});
+	}
+
+	public static function dataAssertNotArray(): array {
+		return [
+			'passed' => [null, '{"user": [12, "string"]}', '$.user[*]'],
+			'failed when JSONPath not exists' => ['Expected to find at least one element matching the JSONPath "$.user[*]"', '{}', '$.user[*]'],
+			'failed when one element is array' => ['Expected all elements not to be array for the JSONPath "$.user[*]"', '{"user": [[], "string"]}', '$.user[*]'],
+		];
+	}
+
 	private function assert(?string $exceptionMessage, string $json, callable $f): void {
 		if ($exceptionMessage) {
 			$this->expectException(AssertionFailedError::class);
