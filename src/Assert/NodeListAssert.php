@@ -9,8 +9,8 @@ use PHPUnit\Framework\TestCase;
 use Stein197\PHPUnit\ExtendedTestCase;
 use function str_contains;
 
-// TODO: assertRegexExists(string $xpath, string $regex)
-// TODO: assertRegexNotExists(string $xpath, string $regex)
+// TODO: assertTextMatchesRegex(string $xpath, string $regex) // All strings must match
+// TODO: assertTextNotMatchesRegex(string $xpath, string $regex) // All strings must not match
 /**
  * HTML/XML nodes assertions.
  * @package Stein197\PHPUnit\Assert

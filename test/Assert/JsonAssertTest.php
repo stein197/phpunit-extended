@@ -77,6 +77,9 @@ final class JsonAssertTest extends PHPUnitTestCase implements ExtendedTestCase {
 	public static function dataAssertExists(): array {
 		return [
 			'passed' => [null, '{"user": [{}, {}]}', '$.user'],
+			'passed when is empty string' => [null, '{"user": ""}', '$.user'],
+			'passed when is empty array' => [null, '{"user": []}', '$.user'],
+			'passed when is empty object' => [null, '{"user": {}}', '$.user'],
 			'failed' => ['Expected to find at least one element matching the JSONPath "$.user"', '{}', '$.user'],
 		];
 	}
@@ -94,6 +97,7 @@ final class JsonAssertTest extends PHPUnitTestCase implements ExtendedTestCase {
 		return [
 			'passed' => [null, '{}', '$.user'],
 			'failed' => ['Expected to find 0 elements matching the JSONPath "$.user", actual: 1', '{"user": [{}, {}]}', '$.user'],
+			// 'failed when is empty string' => ['Expected to find 0 elements matching the JSONPath "$.user", actual: 1', '{"user": [{}, {}]}', '$.user'],
 		];
 	}
 

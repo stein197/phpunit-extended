@@ -19,10 +19,8 @@ use function json_encode;
 use function sizeof;
 use function str_contains;
 
-// TODO: assertTextMatchesRegex(string $query, string $regex)
-// TODO: assertTextNotMatchesRegex(string $query, string $regex)
-// TODO: find(string $query): mixed
-// TODO: assert[Not]Equals() should check ALL elements instead of at least single
+// TODO: assertTextMatchesRegex(string $query, string $regex) // All strings must match
+// TODO: assertTextNotMatchesRegex(string $query, string $regex) // All strings must not match
 /**
  * JSON document assertions by JSONPath queries.
  * @package Stein197\PHPUnit\Assert
