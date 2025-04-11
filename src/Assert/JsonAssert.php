@@ -18,8 +18,6 @@ use function sizeof;
 // TODO: assertNotContains(string $query, mixed | array $partial)
 // TODO: assertTextMatchesRegex(string $query, string $regex)
 // TODO: assertTextNotMatchesRegex(string $query, string $regex)
-// TODO: assertObject(string $query)
-// TODO: assertNotObject(string $query)
 // TODO: find(string $query): mixed
 // TODO: assert[Not]Equals() should check ALL elements instead of at least single
 /**
@@ -268,7 +266,7 @@ final readonly class JsonAssert {
 	}
 
 	/**
-	 * Assert that the elements at the given JSONPath to be array.
+	 * Assert that the elements at the given JSONPath to be array. Empty JSON objects ({}) are considered as arrays.
 	 * @param string $query JSONPath to find elements by.
 	 * @return void
 	 * @throws InvalidJsonPathException When JSONPath is invalid.
@@ -280,7 +278,7 @@ final readonly class JsonAssert {
 	}
 
 	/**
-	 * Assert that none elements at the given JSONPath are array.
+	 * Assert that none elements at the given JSONPath are array. Empty JSON objects ({}) are considered as arrays.
 	 * @param string $query JSONPath to find elements by.
 	 * @return void
 	 * @throws InvalidJsonPathException When JSONPath is invalid.
@@ -289,6 +287,30 @@ final readonly class JsonAssert {
 	 */
 	public function assertNotArray(string $query): void {
 		$this->assertThatType($query, 'array', false);
+	}
+
+	/**
+	 * Assert that the elements at the given JSONPath to be objects. Empty JSON objects ({}) are considered as arrays.
+	 * @param string $query JSONPath to find elements by.
+	 * @return void
+	 * @throws InvalidJsonPathException When JSONPath is invalid.
+	 * @throws ExpectationFailedException When JSONPath does not exist or one of the elements is not object.
+	 * @throws GeneratorNotSupportedException
+	 */
+	public function assertObject(string $query): void {
+		$this->assertThatType($query, 'object', true);
+	}
+
+	/**
+	 * Assert that none elements at the given JSONPath are objects. Empty JSON objects ({}) are considered as arrays.
+	 * @param string $query JSONPath to find elements by.
+	 * @return void
+	 * @throws InvalidJsonPathException When JSONPath is invalid.
+	 * @throws ExpectationFailedException When JSONPath does not exist or one of the elements is object.
+	 * @throws GeneratorNotSupportedException
+	 */
+	public function assertNotObject(string $query): void {
+		$this->assertThatType($query, 'object', false);
 	}
 
 	private function assertThatType(string $query, string $expectedType, bool $assert): void {
