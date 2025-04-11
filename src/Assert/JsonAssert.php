@@ -3,19 +3,22 @@ namespace Stein197\PHPUnit\Assert;
 
 use JsonPath\InvalidJsonPathException;
 use JsonPath\JsonObject;
+use PHPUnit\Framework\AssertionFailedError;
 use PHPUnit\Framework\Exception;
 use PHPUnit\Framework\ExpectationFailedException;
 use PHPUnit\Framework\GeneratorNotSupportedException;
 use PHPUnit\Framework\TestCase;
+use Stein197\PHPUnit\ExtendedTestCase;
 use function array_filter;
 use function array_is_list;
+use function array_key_exists;
 use function gettype;
+use function is_array;
+use function is_string;
 use function json_encode;
 use function sizeof;
+use function str_contains;
 
-// TODO: assertPartial(array $expected)
-// TODO: assertContains(string $query, mixed | array $partial)
-// TODO: assertNotContains(string $query, mixed | array $partial)
 // TODO: assertTextMatchesRegex(string $query, string $regex)
 // TODO: assertTextNotMatchesRegex(string $query, string $regex)
 // TODO: find(string $query): mixed
@@ -28,11 +31,11 @@ use function sizeof;
 final readonly class JsonAssert {
 
 	/**
-	 * @param TestCase $test PHPUnit test case object to call assertions from.
+	 * @param TestCase&ExtendedTestCase $test PHPUnit test case object to call assertions from.
 	 * @param JsonObject $json JSON object.
 	 */
 	public function __construct(
-		private TestCase $test,
+		private TestCase & ExtendedTestCase $test,
 		private JsonObject $json
 	) {}
 
@@ -123,7 +126,7 @@ final readonly class JsonAssert {
 	 */
 	public function assertEquals(string $query, mixed $value): void {
 		$this->assertExists($query);
-		$elements = $this->json->get($query) ?: [];
+		$elements = $this->json->get($query);
 		$this->test->assertContains($value, $elements, 'Expected to find at least one element with the exact value ' . json_encode($value) . " matching the JSONPath \"{$query}\"");
 	}
 
@@ -141,8 +144,56 @@ final readonly class JsonAssert {
 	 */
 	public function assertNotEquals(string $query, mixed $value): void {
 		$this->assertExists($query);
-		$elements = $this->json->get($query) ?: [];
+		$elements = $this->json->get($query);
 		$this->test->assertNotContains($value, $elements, 'Expected to find none elements with the exact value ' . json_encode($value) . " matching the JSONPath \"{$query}\"");
+	}
+
+	/**
+	 * Assert that at least one element at the given JSONPath contains the passed value. If the `$value` is string, it
+	 * asserts for strings that contain the value as a substring. If it's an array, it asserts for arrays (maps) that
+	 * contain the value as a subset (partial comparison).
+	 * @param string $query JSONPath to find elements by.
+	 * @param string|array $value Expected value.
+	 * @return void
+	 * @throws InvalidJsonPathException When JSONPath is invalid.
+	 * @throws ExpectationFailedException When JSONPath does not exist.
+	 * @throws AssertionFailedError When there are no matches.
+	 * ```php
+	 * $this->assertContains('$.user.name', 'john');
+	 * $this->assertContains('$.user', ['age' => 12]);
+	 * ```
+	 */
+	public function assertContains(string $query, string | array $value): void {
+		$this->assertExists($query);
+		foreach ($this->json->get($query) as $element)
+			if (self::contains($element, $value)) {
+				$this->test->pass();
+				return;
+			}
+		$this->test->fail("Expected to find at least one element matching the JSONPath \"{$query}\" and containing " . json_encode($value));
+	}
+
+	/**
+	 * Assert that no elements at the given JSONPath contain the passed value. If the `$value` is string, it asserts for
+	 * strings that contain the value as a substring. If it's an array, it asserts for arrays (maps) that contain the
+	 * value as a subset (partial comparison).
+	 * @param string $query JSONPath to find elements by.
+	 * @param string|array $value Value not to expect.
+	 * @return void
+	 * @throws InvalidJsonPathException When JSONPath is invalid.
+	 * @throws ExpectationFailedException When JSONPath does not exist.
+	 * @throws AssertionFailedError When there is at least one element containing the value.
+	 * ```php
+	 * $this->assertNotContains('$.user.name', 'john');
+	 * $this->assertNotContains('$.user', ['age' => 12]);
+	 * ```
+	 */
+	public function assertNotContains(string $query, string | array $value): void {
+		$this->assertExists($query);
+		foreach ($this->json->get($query) as $element)
+			if (self::contains($element, $value))
+				$this->test->fail("Expected to find no elements matching the JSONPath \"{$query}\" and containing " . json_encode($value));
+		$this->test->pass();
 	}
 
 	/**
@@ -336,5 +387,20 @@ final readonly class JsonAssert {
 			'array' => array_is_list($v) ? 'array' : 'object',
 			default => $type
 		};
+	}
+
+	private static function isSubsetOf(array $superset, array $subset): bool {
+		foreach ($subset as $k => $subsetValue) {
+			if (!array_key_exists($k, $superset))
+				return false;
+			$supersetValue = $superset[$k];
+			if (gettype($supersetValue) !== gettype($subsetValue) || (is_array($subsetValue) ? !self::isSubsetOf($supersetValue, $subsetValue) : $supersetValue !== $subsetValue))
+				return false;
+		}
+		return true;
+	}
+
+	private static function contains(mixed $superset, mixed $subset): bool {
+		return is_string($subset) && is_string($superset) && str_contains($superset, $subset) || is_array($subset) && is_array($superset) && self::isSubsetOf($superset, $subset);
 	}
 }

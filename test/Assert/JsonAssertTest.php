@@ -7,9 +7,10 @@ use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\Attributes\TestDox;
 use PHPUnit\Framework\TestCase as PHPUnitTestCase;
 use Stein197\PHPUnit\Assert\JsonAssert;
+use Stein197\PHPUnit\ExtendedTestCase;
 use Stein197\PHPUnit\TestCase;
 
-final class JsonAssertTest extends PHPUnitTestCase {
+final class JsonAssertTest extends PHPUnitTestCase implements ExtendedTestCase {
 
 	use TestCase;
 
@@ -141,6 +142,55 @@ final class JsonAssertTest extends PHPUnitTestCase {
 			'failed when JSONPath not exists' => ['Expected to find at least one element matching the JSONPath "$.user"', '{}', '$.user', null],
 			'failed when one element matches JSONPath and one element is equal' => ['Expected to find none elements with the exact value "string" matching the JSONPath "$.user"', '{"user": "string"}', '$.user', 'string'],
 			'failed when one element matches JSONPath and many elements are equal' => ['Expected to find none elements with the exact value "string" matching the JSONPath "$.user[*]"', '{"user": ["first", "string"]}', '$.user[*]', 'string'],
+		];
+	}
+
+	#[Test]
+	#[DataProvider('dataAssertContains')]
+	#[TestDox('assertContains()')]
+	public function testAssertContains(?string $exceptionMessage, string $json, string $query, string | array $value): void {
+		$this->assert($exceptionMessage, $json, static function (JsonAssert $assert) use ($query, $value): void {
+			$assert->assertContains($query, $value);
+		});
+	}
+
+	public static function dataAssertContains(): array {
+		return [
+			'passed when value is empty string' => [null, '{"user": ["first", true, 12, {}, "second"]}', '$.user[*]', ''],
+			'passed when value is string' => [null, '{"user": ["first", true, 12, {}, "second"]}', '$.user[*]', 'sec'],
+			'passed when value is empty array' => [null, '{"user": [{"a": 1, "b": 2}, true, 12, "string", {"c": 3}]}', '$.user[*]', []],
+			'passed when value is array' => [null, '{"user": [{"a": 1, "b": 2, "d": null}, true, 12, "string", {"c": 3}]}', '$.user[*]', ['b' => 2, 'd' => null]],
+			'passed when value is nested array' => [null, '{"user": [{"a": 1, "b": {"c": {"d": 4, "null": null}, "e": 5}}, true, 12, "string", {"f": 6}]}', '$.user[*]', ['b' => ['c' => ['d' => 4, 'null' => null]]]],
+			'failed when JSONPath not exists' => ['Expected to find at least one element matching the JSONPath "$.user[*]"', '{}', '$.user[*]', ''],
+			'failed when value is string and no matches' => ['Expected to find at least one element matching the JSONPath "$.user[*]" and containing "third"', '{"user": ["first", "second"]}', '$.user[*]', 'third'],
+			'failed when value is array and no matches' => ['Expected to find at least one element matching the JSONPath "$.user[*]" and containing {"d":4}', '{"user": [{"a": 1, "b": 2}, {"c": 3}]}', '$.user[*]', ['d' => 4]],
+			'failed when value is string and matches are empty' => ['Expected to find at least one element matching the JSONPath "$.user[*]" and containing "third"', '{"user": []}', '$.user[*]', 'third'],
+			'failed when value is array and matches are empty' => ['Expected to find at least one element matching the JSONPath "$.user[*]" and containing {"d":4}', '{"user": []}', '$.user[*]', ['d' => 4]],
+		];
+	}
+
+	#[Test]
+	#[DataProvider('dataAssertNotContains')]
+	#[TestDox('assertNotContains()')]
+	public function testAssertNotContains(?string $exceptionMessage, string $json, string $query, string | array $value): void {
+		$this->assert($exceptionMessage, $json, static function (JsonAssert $assert) use ($query, $value): void {
+			$assert->assertNotContains($query, $value);
+		});
+	}
+
+	public static function dataAssertNotContains(): array {
+		return [
+			'passed when value is string and matches are empty' => [null, '{"user": []}', '$.user[*]', 'thi'],
+			'passed when value is array and matches are empty' => [null, '{"user": []}', '$.user[*]', ['a' => 1]],
+			'passed when value is string and not contained' => [null, '{"user": ["first", true, 12, "second"]}', '$.user[*]', 'thi'],
+			'passed when value is array and not contained' => [null, '{"user": [{"a": 1}, true, 12, {"c": 3}]}', '$.user[*]', ['b' => 2]],
+			'passed when value is nested array and not contained' => [null, '{"user": [{"a": {"b": 2}}, {"c": 3}]}', '$.user[*]', ['a' => ['b' => null]]],
+			'failed when JSONPath not exists' => ['Expected to find at least one element matching the JSONPath "$.user[*]"', '{}', '$.user[*]', ''],
+			'failed when value is empty string' => ['Expected to find no elements matching the JSONPath "$.user[*]" and containing ""', '{"user": ["first", true, 12, "second"]}', '$.user[*]', ''],
+			'failed when value is empty array' => ['Expected to find no elements matching the JSONPath "$.user[*]" and containing ', '{"user": [{"a": 1, "b": 2, "c": null}, {"d": 4}]}', '$.user[*]', []],
+			'failed when value is string and contained' => ['Expected to find no elements matching the JSONPath "$.user[*]" and containing "second"', '{"user": ["first", true, 12, "second"]}', '$.user[*]', 'second'],
+			'failed when value is array and contained' => ['Expected to find no elements matching the JSONPath "$.user[*]" and containing {"b":2,"c":null}', '{"user": [{"a": 1, "b": 2, "c": null}, {"d": 4}]}', '$.user[*]', ['b' => 2, 'c' => null]],
+			'failed when value is nested array and contained' => ['Expected to find no elements matching the JSONPath "$.user[*]" and containing {"b":{"c":3,"d":null}}', '{"user": [{"a": 1, "b": {"c": 3, "d": null}}, {"d": 4}]}', '$.user[*]', ['b' => ['c' => 3, 'd' => null]]],
 		];
 	}
 
