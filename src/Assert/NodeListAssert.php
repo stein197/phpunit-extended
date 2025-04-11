@@ -173,16 +173,9 @@ final readonly class NodeListAssert {
 	}
 
 	private function getChildrenCount(): int {
-		if (!$this->nodeList->count())
-			$this->test->fail("Expected to find at least one element matching the query \"{$this->query}\"");
-		return array_reduce(
-			array_map(
-				fn (Node $node): int => $node->childNodes->count(),
-				[...$this->nodeList]
-			),
-			fn (int $prev, int $cur): int => $prev + $cur,
-			0
-		);
+		if ($this->nodeList->count())
+			return array_reduce([...$this->nodeList], fn (int $prev, Node $cur): int => $prev + $cur->childNodes->count(), 0);
+		$this->test->fail("Expected to find at least one element matching the query \"{$this->query}\"");
 	}
 
 	private function getTextContent(): array {
