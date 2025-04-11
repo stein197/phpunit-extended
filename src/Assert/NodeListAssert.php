@@ -6,6 +6,7 @@ use Dom\NodeList;
 use PHPUnit\Framework\ExpectationFailedException;
 use PHPUnit\Framework\AssertionFailedError;
 use PHPUnit\Framework\TestCase;
+use Stein197\PHPUnit\ExtendedTestCase;
 use function str_contains;
 
 // TODO: assertRegexExists(string $xpath, string $regex)
@@ -18,12 +19,12 @@ use function str_contains;
 final readonly class NodeListAssert {
 
 	/**
-	 * @param TestCase $test PHPUnit test case object to call assertions from.
+	 * @param TestCase&ExtendedTestCase $test PHPUnit test case object to call assertions from.
 	 * @param NodeList $nodeList HTML/XML nodes.
 	 * @param string $query Query used to find the list. Only for debugging purpose.
 	 */
 	public function __construct(
-		private TestCase $test,
+		private TestCase & ExtendedTestCase $test,
 		private NodeList $nodeList,
 		private string $query
 	) {}
@@ -150,7 +151,7 @@ final readonly class NodeListAssert {
 		$this->assertExists();
 		foreach ($this->getTextContent() as $content)
 			if (str_contains($content, $text)) {
-				$this->test->assertTrue(true);
+				$this->test->pass();
 				return;
 			}
 		$this->test->fail("Expected to find at least one element matching the query \"{$this->query}\" containing the text \"{$text}\"");
