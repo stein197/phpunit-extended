@@ -94,8 +94,7 @@ final readonly class JsonAssert {
 	 * ```
 	 */
 	public function assertExists(string $query): void {
-		$length = sizeof($this->json->get($query));
-		$this->test->assertGreaterThan(0, $length, "Expected to find at least one element matching the JSONPath \"{$query}\"");
+		$this->test->assertNotEmpty($this->json->get($query), "Expected to find at least one element matching the JSONPath \"{$query}\"");
 	}
 
 	/**
