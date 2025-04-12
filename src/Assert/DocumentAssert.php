@@ -12,7 +12,6 @@ use function http_build_query;
 use function parse_str;
 use function Stein197\PHPUnit\array_is_subset;
 
-// TODO: within(string $xpath, callable $f) - use query(, $contextNode)
 /**
  * HTML/XML document assertions.
  * @package Stein197\PHPUnit\Assert

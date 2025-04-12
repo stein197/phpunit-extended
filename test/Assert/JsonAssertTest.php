@@ -199,6 +199,44 @@ final class JsonAssertTest extends PHPUnitTestCase implements ExtendedTestCase {
 	}
 
 	#[Test]
+	#[DataProvider('dataAssertMatchesRegex')]
+	#[TestDox('assertMatchesRegex()')]
+	public function testAssertMatchesRegex(?string $exceptionMessage, string $json, string $query, string $regex): void {
+		$this->assert($exceptionMessage, $json, static function (JsonAssert $assert) use ($query, $regex): void {
+			$assert->assertMatchesRegex($query, $regex);
+		});
+	}
+
+	public static function dataAssertMatchesRegex(): array {
+		return [
+			'passed when no elements' => [null, '{"user": []}', '$.user[*]', '/^\\d+$/'],
+			'passed when all elements match' => [null, '{"user": ["12", "23"]}', '$.user[*]', '/^\\d+$/'],
+			'failed when one element is not a string' => ['Expected all elements to be string for the JSONPath "$.user[*]"', '{"user": [12, "23"]}', '$.user[*]', '/^\\d+$/'],
+			'failed when one element not matches' => ['Expected all elements matching the JSONPath "$.user[*]" to match regular expression "/^\\d+$/"', '{"user": ["12", "asd"]}', '$.user[*]', '/^\\d+$/'],
+			'failed when JSONPath not exists' => ['Expected to find at least one element matching the JSONPath "$.user[*]"', '{}', '$.user[*]', '/^\\d+$/'],
+		];
+	}
+
+	#[Test]
+	#[DataProvider('dataAssertNotMatchesRegex')]
+	#[TestDox('assertNotMatchesRegex()')]
+	public function testAssertNotMatchesRegex(?string $exceptionMessage, string $json, string $query, string $regex): void {
+		$this->assert($exceptionMessage, $json, static function (JsonAssert $assert) use ($query, $regex): void {
+			$assert->assertNotMatchesRegex($query, $regex);
+		});
+	}
+
+	public static function dataAssertNotMatchesRegex(): array {
+		return [
+			'passed when no elements' => [null, '{"user": []}', '$.user[*]', '/^\\d+$/'],
+			'passed when all elements not match' => [null, '{"user": ["abc", "def"]}', '$.user[*]', '/^\\d+$/'],
+			'failed when one element matches' => ['Expected all elements matching the JSONPath "$.user[*]" not to match regular expression "/^\\d+$/"', '{"user": ["12", "ads"]}', '$.user[*]', '/^\\d+$/'],
+			'failed when one element is not a string' => ['Expected all elements to be string for the JSONPath "$.user[*]"', '{"user": [12, "23"]}', '$.user[*]', '/^\\d+$/'],
+			'failed when JSONPath not exists' => ['Expected to find at least one element matching the JSONPath "$.user[*]"', '{}', '$.user[*]', '/^\\d+$/'],
+		];
+	}
+
+	#[Test]
 	#[DataProvider('dataAssertNull')]
 	#[TestDox('assertNull()')]
 	public function testAssertNull(?string $exceptionMessage, string $json, string $query): void {

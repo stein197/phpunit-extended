@@ -19,8 +19,6 @@ use function sizeof;
 use function Stein197\PHPUnit\array_is_subset;
 use function str_contains;
 
-// TODO: assertTextMatchesRegex(string $query, string $regex) // All strings must match
-// TODO: assertTextNotMatchesRegex(string $query, string $regex) // All strings must not match
 /**
  * JSON document assertions by JSONPath queries.
  * @package Stein197\PHPUnit\Assert
@@ -191,6 +189,42 @@ final readonly class JsonAssert {
 			if (self::contains($element, $value))
 				$this->test->fail("Expected to find no elements matching the JSONPath \"{$query}\" and containing " . json_encode($value));
 		$this->test->pass();
+	}
+
+	/**
+	 * Assert that all elements are strings and match the given regular expression.
+	 * @param string $query JSONPath to find elements by.
+	 * @param string $regex Regular expression to match against.
+	 * @return void
+	 * @throws InvalidJsonPathException When JSONPath is invalid.
+	 * @throws ExpectationFailedException When JSONPath does not exist or one of the elements is not a string or does not match the given regular expression.
+	 * @throws Exception
+	 * ```php
+	 * $this->assertMatchesRegex('$.user[*].age', '/^\\d+$/i');
+	 * ```
+	 */
+	public function assertMatchesRegex(string $query, string $regex): void {
+		$this->assertString($query);
+		foreach ($this->json->get($query) as $element)
+			$this->test->assertMatchesRegularExpression($regex, $element, "Expected all elements matching the JSONPath \"{$query}\" to match regular expression \"{$regex}\"");
+	}
+
+	/**
+	 * Assert that all elements are strings and don't match the given regular expression.
+	 * @param string $query JSONPath to find elements by.
+	 * @param string $regex Regular expression to match against.
+	 * @return void
+	 * @throws InvalidJsonPathException When JSONPath is invalid.
+	 * @throws ExpectationFailedException When JSONPath does not exist or one of the elements is not a string or matches the given regular expression.
+	 * @throws Exception
+	 * ```php
+	 * $this->assertNotMatchesRegex('$.user[*].age', '/^\\d+$/i');
+	 * ```
+	 */
+	public function assertNotMatchesRegex(string $query, string $regex): void {
+		$this->assertString($query);
+		foreach ($this->json->get($query) as $element)
+			$this->test->assertDoesNotMatchRegularExpression($regex, $element, "Expected all elements matching the JSONPath \"{$query}\" not to match regular expression \"{$regex}\"");
 	}
 
 	/**
