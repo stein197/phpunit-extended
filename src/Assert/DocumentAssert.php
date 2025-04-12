@@ -2,10 +2,16 @@
 namespace Stein197\PHPUnit\Assert;
 
 use Dom\Document;
+use Dom\Element;
 use Dom\XPath;
+use PHPUnit\Framework\AssertionFailedError;
 use PHPUnit\Framework\TestCase;
+use Stein197\PHPUnit\ExtendedTestCase;
+use function explode;
+use function http_build_query;
+use function parse_str;
+use function Stein197\PHPUnit\array_is_subset;
 
-// TODO: assertAnchorExists(string $href, array $query = [], ?string $hash = null)
 // TODO: assertAnchorNotExists(string $href, array $query = [], ?string $hash = null)
 // TODO: within(string $xpath, callable $f) - use query(, $contextNode)
 /**
@@ -18,11 +24,11 @@ final readonly class DocumentAssert {
 	private XPath $xpath;
 
 	/**
-	 * @param TestCase $test PHPUnit test case object to call assertions from.
+	 * @param TestCase&ExtendedTestCase $test PHPUnit test case object to call assertions from.
 	 * @param Document $doc HTML/XML document.
 	 */
 	public function __construct(
-		private TestCase $test,
+		private TestCase & ExtendedTestCase $test,
 		private Document $doc
 	) {
 		$this->xpath = new XPath($doc);
@@ -50,5 +56,40 @@ final readonly class DocumentAssert {
 	 */
 	public function query(string $query): NodeListAssert {
 		return new NodeListAssert($this->test, $this->doc->querySelectorAll($query), $query);
+	}
+
+	/**
+	 * Assert that there is at least one `<a>` element with the expected URL, query and hash.
+	 * @param string $path Path to expect. The part before `?` and `#`.
+	 * @param array $query Query parameters to expect. Empty array means no query string. The comparison is done
+	 *                     partially. All values and keys automatically get encoded and decoded. The array can be nested.
+	 * @param null|string $hash Hash to expect. Null means no hash part at all. Empty string denotes only the single `#` character.
+	 * @return void
+	 * @throws AssertionFailedError When there are no anchor elements with passed href.
+	 * ```php
+	 * $this->assertAnchorExists('/url', ['a' => ['b' => 2]], 'hash'); // Expect '/url?a[b]=2#hash' href
+	 * ```
+	 */
+	public function assertAnchorExists(string $path, array $query = [], ?string $hash = null): void {
+		$elements = $this->xpath->query('//a[@href]');
+		foreach ($elements as $a) {
+			if (!$a instanceof Element)
+				continue;
+			[$hrefUrl, $hrefQuery, $hrefHash] = self::parseHref($a->getAttribute('href'));
+			if ($path === $hrefUrl && array_is_subset($hrefQuery, $query) && $hash === $hrefHash) {
+				$this->test->pass();
+				return;
+			}
+		}
+		$dump = $path . ($query ? ('?' . http_build_query($query)) : '') . ($hash === null ? '' : ('#' . $hash));
+		$this->test->fail("Expected to find at least one <a> with href \"{$dump}\"");
+	}
+
+	private static function parseHref(string $href): array {
+		@[$path, $hash] = explode('#', $href, 2);
+		@[$path, $query] = explode('?', $path, 2);
+		$queryArray = [];
+		parse_str($query, $queryArray);
+		return [$path, $queryArray, $hash];
 	}
 }

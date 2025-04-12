@@ -12,7 +12,10 @@
     "autoload": {
         "psr-4": {
             "Stein197\\PHPUnit\\": "src/"
-        }
+        },
+        "files": [
+            "src/index.php"
+        ]
     },
     "autoload-dev": {
         "psr-4": {

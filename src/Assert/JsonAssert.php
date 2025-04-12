@@ -11,12 +11,12 @@ use PHPUnit\Framework\TestCase;
 use Stein197\PHPUnit\ExtendedTestCase;
 use function array_filter;
 use function array_is_list;
-use function array_key_exists;
 use function gettype;
 use function is_array;
 use function is_string;
 use function json_encode;
 use function sizeof;
+use function Stein197\PHPUnit\array_is_subset;
 use function str_contains;
 
 // TODO: assertTextMatchesRegex(string $query, string $regex) // All strings must match
@@ -386,18 +386,7 @@ final readonly class JsonAssert {
 		};
 	}
 
-	private static function isSubsetOf(array $superset, array $subset): bool {
-		foreach ($subset as $k => $subsetValue) {
-			if (!array_key_exists($k, $superset))
-				return false;
-			$supersetValue = $superset[$k];
-			if (gettype($supersetValue) !== gettype($subsetValue) || (is_array($subsetValue) ? !self::isSubsetOf($supersetValue, $subsetValue) : $supersetValue !== $subsetValue))
-				return false;
-		}
-		return true;
-	}
-
 	private static function contains(mixed $superset, mixed $subset): bool {
-		return is_string($subset) && is_string($superset) && str_contains($superset, $subset) || is_array($subset) && is_array($superset) && self::isSubsetOf($superset, $subset);
+		return is_string($subset) && is_string($superset) && str_contains($superset, $subset) || is_array($subset) && is_array($superset) && array_is_subset($superset, $subset);
 	}
 }
