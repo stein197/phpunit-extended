@@ -16,8 +16,8 @@ namespace Test;
 
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
-use Stein197\PHPUnit\ExtendedTestCase;          // Some methods require the test class to implement this interface. It's already implemented by the TestCase trait
-use Stein197\PHPUnit\TestCase as TestCaseTrait; // Trait that extends the basic PHPUnit assertion functionality
+use Stein197\PHPUnit\ExtendedTestCase;
+use Stein197\PHPUnit\TestCase as TestCaseTrait; // Trait that extends the basic PHPUnit assertion functionality and implements the ExtendedTestCase interface
 
 // Your test class
 final class ResponseTest extends TestCase implements ExtendedTestCase {
@@ -43,6 +43,10 @@ final class ResponseTest extends TestCase implements ExtendedTestCase {
 		$json = $response->json(); // Return a JsonAssert containing the response body
 		$json->assertExists('$.user'); // Assert that there is a given JSONPath
 		// ...
+
+		$this->json('{...}'); // Wrap a JSON string
+		$this->html('<!DOCTYPE html>...'); // Wrap an HTML string
+		$this->xml('<?xml version="1.0" ?>...'); // Wrap an XML string
 	}
 }
 ```
@@ -63,5 +67,6 @@ The main methods of the trait are:
 - `json(string $json): JsonAssert`: Wraps a JSON string in an assertion object
 - `html(string $html): DocumentAssert`: Wraps an HTML string in an assertion object
 - `xml(string $xml): DocumentAssert`: Wraps an XML string in an assertion object
+- `pass(): void`: Marks test as passed
 
 The whole documentation to every assertion method can be found in the phpdoc comments in the source code.
