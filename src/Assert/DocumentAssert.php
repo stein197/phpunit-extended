@@ -12,7 +12,6 @@ use function http_build_query;
 use function parse_str;
 use function Stein197\PHPUnit\array_is_subset;
 
-// TODO: assertAnchorNotExists(string $href, array $query = [], ?string $hash = null)
 // TODO: within(string $xpath, callable $f) - use query(, $contextNode)
 /**
  * HTML/XML document assertions.
@@ -66,7 +65,7 @@ final readonly class DocumentAssert {
 	 *                     Only string values are allowed.
 	 * @param null|string $hash Hash to expect. Null means no hash part at all. Empty string denotes only the single `#` character.
 	 * @return void
-	 * @throws AssertionFailedError When there are no anchor elements with passed href.
+	 * @throws AssertionFailedError When there are no anchor elements with the passed href.
 	 * ```php
 	 * $this->assertAnchorExists('/url', ['a' => ['b' => 2]], 'hash'); // Expect '/url?a[b]=2#hash' href
 	 * ```
@@ -76,14 +75,35 @@ final readonly class DocumentAssert {
 		foreach ($elements as $a) {
 			if (!$a instanceof Element)
 				continue;
-			[$hrefPath, $hrefQuery, $hrefHash] = self::parseHref($a->getAttribute('href'));
-			if ($path === $hrefPath && array_is_subset($hrefQuery, $query) && $hash === $hrefHash) {
+			if (self::isHrefEquals($a, $path, $query, $hash)) {
 				$this->test->pass();
 				return;
 			}
 		}
-		$dump = $path . ($query ? ('?' . http_build_query($query)) : '') . ($hash === null ? '' : ('#' . $hash));
-		$this->test->fail("Expected to find at least one <a> with href \"{$dump}\"");
+		$this->test->fail('Expected to find at least one <a> with href "' . self::toHref($path, $query, $hash) . '"');
+	}
+
+	/**
+	 * Assert that there is no `<a>` element with the expected URL, query and hash.
+	 * @param string $path Path not to expect. The part before `?` and `#`.
+	 * @param array $query Query parameters not to expect. Empty array means no query string. The comparison is done
+	 *                     partially. All values and keys automatically get encoded and decoded. The array can be nested.
+	 *                     Only string values are allowed.
+	 * @param null|string $hash Hash not to expect. Null means no hash part at all. Empty string denotes only the single `#` character.
+	 * @return void
+	 * @throws AssertionFailedError When there is an element with the passed href.
+	 * ```php
+	 * $this->assertAnchorNotExists('/url', ['a' => ['b' => 2]], 'hash'); // Not expecting '/url?a[b]=2#hash' href
+	 * ```
+	 */
+	public function assertAnchorNotExists(string $path, array $query = [], ?string $hash = null): void {
+		$elements = $this->xpath->query('//a[@href]');
+		foreach ($elements as $a) {
+			if (!$a instanceof Element)
+				continue;
+			$this->test->assertFalse(self::isHrefEquals($a, $path, $query, $hash), 'Expected to find no <a> with href "' . self::toHref($path, $query, $hash) . '"');
+		}
+		$this->test->pass();
 	}
 
 	private static function parseHref(string $href): array {
@@ -93,5 +113,14 @@ final readonly class DocumentAssert {
 		if ($query)
 			parse_str($query, $queryArray);
 		return [$path, $queryArray, $hash];
+	}
+
+	private static function toHref(string $path, array $query, ?string $hash): string {
+		return $path . ($query ? ('?' . http_build_query($query)) : '') . ($hash === null ? '' : ('#' . $hash));
+	}
+
+	private function isHrefEquals(Element $a, string $path, array $query, ?string $hash): bool {
+		[$hrefPath, $hrefQuery, $hrefHash] = self::parseHref($a->getAttribute('href'));
+		return $path === $hrefPath && array_is_subset($hrefQuery, $query) && $hash === $hrefHash;
 	}
 }

@@ -56,4 +56,39 @@ final class DocumentAssertTest extends PHPUnitTestCase implements ExtendedTestCa
 			'failed when $hash mismatches' => ['Expected to find at least one <a> with href "/url?a=1#hash-0"', '<body><a href="/url?a=1#hash"></a></body>', '/url', ['a' => '1'], 'hash-0'],
 		];
 	}
+
+	#[Test]
+	#[DataProvider('dataAssertAnchorNotExists')]
+	#[TestDox('assertAnchorNotExists()')]
+	public function testAssertAnchorNotExists(?string $exceptionMessage, string $content, string $expectedUrl, array $expectedQuery, ?string $expectedHash): void {
+		if ($exceptionMessage) {
+			$this->expectException(AssertionFailedError::class);
+			$this->expectExceptionMessage($exceptionMessage);
+		}
+		$this->html('<!DOCTYPE html>' . $content)->assertAnchorNotExists($expectedUrl, $expectedQuery, $expectedHash);
+	}
+
+	public static function dataAssertAnchorNotExists(): array {
+		return [
+			'failed when all arguments are empty' => ['Expected to find no <a> with href ""', '<body><a href=""></a></body>', '', [], null],
+			'passed when all arguments are empty' => [null, '<body><a href="/"></a></body>', '', [], null],
+			'failed when only $path exists and matches' => ['Expected to find no <a> with href "/url"', '<body><a href="/url"></a></body>', '/url', [], null],
+			'passed when only $path exists and mismatches' => [null, '<body><a href="/url-1"></a></body>', '/url-2', [], null],
+			'failed when only $query exists and matches exactly and order matches' => ['Expected to find no <a> with href "?a=1&b=2&c=3"', '<body><a href="?a=1&b=2&c=3"></a></body>', '', ['a' => '1', 'b' => '2', 'c' => '3'], null],
+			'failed when only $query exists and matches exactly and order mismatches' => ['Expected to find no <a> with href "?c=3&b=2&a=1"', '<body><a href="?a=1&b=2&c=3"></a></body>', '', ['c' => '3', 'b' => '2', 'a' => '1'], null],
+			'failed when only $query exists and matches partially and order matches' => ['Expected to find no <a> with href "?a=1&b=2"', '<body><a href="?a=1&b=2&c=3"></a></body>', '', ['a' => '1', 'b' => '2'], null],
+			'failed when only $query exists and matches partially and order mismatches' => ['Expected to find no <a> with href "?b=2&a=1"', '<body><a href="?a=1&b=2&c=3"></a></body>', '', ['b' => '2', 'a' => '1'], null],
+			'passed when only $query exists and mismatches' => [null, '<body><a href="?a=1&b=2&c=3"></a></body>', '', ['a' => '10'], null],
+			'failed when only $hash exists and empty' => ['Expected to find no <a> with href "#"', '<body><a href="#"></a></body>', '', [], ''],
+			'failed when only $hash exists and not empty' => ['Expected to find no <a> with href "#hash"', '<body><a href="#hash"></a></body>', '', [], 'hash'],
+			'passed when only $hash exists and mismatches' => [null, '<body><a href="#hash-2"></a></body>', '', [], 'hash-1'],
+			'failed when $path and $query exist' => ['Expected to find no <a> with href "/url?a=1"', '<body><a href="/url?a=1"></a></body>', '/url', ['a' => '1'], null],
+			'failed when $path and $hash exist' => ['Expected to find no <a> with href "/url#hash"', '<body><a href="/url#hash"></a></body>', '/url', [], 'hash'],
+			'failed when $query and $hash exist' => ['Expected to find no <a> with href "?a=1#hash"', '<body><a href="?a=1#hash"></a></body>', '', ['a' => '1'], 'hash'],
+			'failed when all arguments match' => ['Expected to find no <a> with href "/url?b=2&a=1#hash"', '<body><a href="/url?a=1&b=2#hash"></a></body>', '/url', ['b' => '2', 'a' => '1'], 'hash'],
+			'passed when $path mismatches' => [null, '<body><a href="/url?a=1#hash"></a></body>', '/url-0', ['a' => '1'], 'hash'],
+			'passed when $query mismatches' => [null, '<body><a href="/url?a=1#hash"></a></body>', '/url', ['a' => '10'], 'hash'],
+			'passed when $hash mismatches' => [null, '<body><a href="/url?a=1#hash"></a></body>', '/url', ['a' => '1'], 'hash-0'],
+		];
+	}
 }
