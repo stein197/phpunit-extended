@@ -9,8 +9,6 @@ use PHPUnit\Framework\TestCase;
 use Stein197\PHPUnit\ExtendedTestCase;
 use function str_contains;
 
-// TODO: assertTextMatchesRegex(string $xpath, string $regex) // All strings must match
-// TODO: assertTextNotMatchesRegex(string $xpath, string $regex) // All strings must not match
 /**
  * HTML/XML nodes assertions.
  * @package Stein197\PHPUnit\Assert
@@ -170,6 +168,36 @@ final readonly class NodeListAssert {
 		$this->assertExists();
 		foreach ($this->getTextContent() as $content)
 			$this->test->assertStringNotContainsString($text, $content, "Expected to find no elements matching the query \"{$this->query}\" containing the text \"{$text}\"");
+	}
+
+	/**
+	 * Assert that all elements match the given regular expression.
+	 * @param string $regex Regular expression to match against.
+	 * @return void
+	 * @throws ExpectationFailedException When there are no nodes in the list or one element does not match the regular expression.
+	 * ```php
+	 * $this->assertMatchesRegex('/^\\d+$/');
+	 * ```
+	 */
+	public function assertMatchesRegex(string $regex): void {
+		$this->assertExists();
+		foreach ($this->getTextContent() as $content)
+			$this->test->assertMatchesRegularExpression($regex, $content, "Expected all elements at the query \"{$this->query}\" to match the regular expression \"{$regex}\"");
+	}
+
+	/**
+	 * Assert that all elements do not match the given regular expression.
+	 * @param string $regex Regular expression to match against.
+	 * @return void
+	 * @throws ExpectationFailedException When there are no nodes in the list or one element matches the regular expression.
+	 * ```php
+	 * $this->assertMatchesNotRegex('/^\\d+$/');
+	 * ```
+	 */
+	public function assertNotMatchesRegex(string $regex): void {
+		$this->assertExists();
+		foreach ($this->getTextContent() as $content)
+			$this->test->assertDoesNotMatchRegularExpression($regex, $content, "Expected all elements at the query \"{$this->query}\" not to match the regular expression \"{$regex}\"");
 	}
 
 	private function getChildrenCount(): int {

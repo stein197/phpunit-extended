@@ -244,6 +244,40 @@ final class NodeListAssertTest extends PHPUnitTestCase implements ExtendedTestCa
 		];
 	}
 
+	#[Test]
+	#[DataProvider('dataAssertMatchesRegex')]
+	#[TestDox('assertMatchesRegex()')]
+	public function testAssertMatchesRegex(?string $exceptionMessage, string $content, string $query, string $regex): void {
+		$this->assert($exceptionMessage, 'html', $content, $query, static function (NodeListAssert $assert) use ($regex): void {
+			$assert->assertMatchesRegex($regex);
+		});
+	}
+
+	public static function dataAssertMatchesRegex(): array {
+		return [
+			'passed when all elements match' => [null, '<!DOCTYPE html><body><p>123</p><p>456</p></body>', 'body > p', '/^\\d+$/'],
+			'failed when one element not matches' => ['Expected all elements at the query "body > p" to match the regular expression "/^\\d+$/"', '<!DOCTYPE html><body><p>123</p><p>abc</p></body>', 'body > p', '/^\\d+$/'],
+			'failed when no elements' => ['Expected to find at least one element matching the query "body > p"', '<!DOCTYPE html><body></body>', 'body > p', '/^\\d+$/'],
+		];
+	}
+
+	#[Test]
+	#[DataProvider('dataAssertNotMatchesRegex')]
+	#[TestDox('assertNotMatchesRegex()')]
+	public function testAssertNotMatchesRegex(?string $exceptionMessage, string $content, string $query, string $regex): void {
+		$this->assert($exceptionMessage, 'html', $content, $query, static function (NodeListAssert $assert) use ($regex): void {
+			$assert->assertNotMatchesRegex($regex);
+		});
+	}
+
+	public static function dataAssertNotMatchesRegex(): array {
+		return [
+			'failed when all elements match' => ['Expected all elements at the query "body > p" not to match the regular expression "/^\\d+$/"', '<!DOCTYPE html><body><p>123</p><p>456</p></body>', 'body > p', '/^\\d+$/'],
+			'passed when one element not matches' => [null, '<!DOCTYPE html><body><p>123</p><p>abc</p></body>', 'body > p', '/^\\+$/'],
+			'failed when no elements' => ['Expected to find at least one element matching the query "body > p"', '<!DOCTYPE html><body></body>', 'body > p', '/^\\d+$/'],
+		];
+	}
+
 	private function assert(?string $exceptionMessage, string $format, string $content, string $query, callable $f): void {
 		if ($exceptionMessage) {
 			$this->expectException(AssertionFailedError::class);
