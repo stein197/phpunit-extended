@@ -63,6 +63,7 @@ final readonly class DocumentAssert {
 	 * @param string $path Path to expect. The part before `?` and `#`.
 	 * @param array $query Query parameters to expect. Empty array means no query string. The comparison is done
 	 *                     partially. All values and keys automatically get encoded and decoded. The array can be nested.
+	 *                     Only string values are allowed.
 	 * @param null|string $hash Hash to expect. Null means no hash part at all. Empty string denotes only the single `#` character.
 	 * @return void
 	 * @throws AssertionFailedError When there are no anchor elements with passed href.
@@ -75,8 +76,8 @@ final readonly class DocumentAssert {
 		foreach ($elements as $a) {
 			if (!$a instanceof Element)
 				continue;
-			[$hrefUrl, $hrefQuery, $hrefHash] = self::parseHref($a->getAttribute('href'));
-			if ($path === $hrefUrl && array_is_subset($hrefQuery, $query) && $hash === $hrefHash) {
+			[$hrefPath, $hrefQuery, $hrefHash] = self::parseHref($a->getAttribute('href'));
+			if ($path === $hrefPath && array_is_subset($hrefQuery, $query) && $hash === $hrefHash) {
 				$this->test->pass();
 				return;
 			}
@@ -89,7 +90,8 @@ final readonly class DocumentAssert {
 		@[$path, $hash] = explode('#', $href, 2);
 		@[$path, $query] = explode('?', $path, 2);
 		$queryArray = [];
-		parse_str($query, $queryArray);
+		if ($query)
+			parse_str($query, $queryArray);
 		return [$path, $queryArray, $hash];
 	}
 }
