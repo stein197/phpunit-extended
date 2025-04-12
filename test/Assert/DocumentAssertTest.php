@@ -9,7 +9,6 @@ use PHPUnit\Framework\TestCase as PHPUnitTestCase;
 use Stein197\PHPUnit\ExtendedTestCase;
 use Stein197\PHPUnit\TestCase;
 
-// TODO: Test namespaced XML
 final class DocumentAssertTest extends PHPUnitTestCase implements ExtendedTestCase {
 
 	use TestCase;
@@ -90,5 +89,10 @@ final class DocumentAssertTest extends PHPUnitTestCase implements ExtendedTestCa
 			'passed when $query mismatches' => [null, '<body><a href="/url?a=1#hash"></a></body>', '/url', ['a' => '10'], 'hash'],
 			'passed when $hash mismatches' => [null, '<body><a href="/url?a=1#hash"></a></body>', '/url', ['a' => '1'], 'hash-0'],
 		];
+	}
+
+	#[Test]
+	public function namespacedXml(): void {
+		$this->xml('<?xml version="1.0" encoding="UTF-8" ?><root xmlns:x="http://example.com"><x:element /></root>')->xpath('//x:element')->assertExists();
 	}
 }
