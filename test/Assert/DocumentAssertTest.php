@@ -51,6 +51,9 @@ final class DocumentAssertTest extends PHPUnitTestCase implements ExtendedTestCa
 			'passed when $path and $hash exist' => [null, '<body><a href="/url#hash"></a></body>', '/url', [], 'hash'],
 			'passed when $query and $hash exist' => [null, '<body><a href="?a=1#hash"></a></body>', '', ['a' => '1'], 'hash'],
 			'passed when all arguments match' => [null, '<body><a href="/url?a[b]=2&a[c]=3#hash"></a></body>', '/url', ['a' => ['b' => '2', 'c' => '3']], 'hash'],
+			'failed when $path mismatches' => ['Expected to find at least one <a> with href "/url-0?a=1#hash"', '<body><a href="/url?a=1#hash"></a></body>', '/url-0', ['a' => '1'], 'hash'],
+			'failed when $query mismatches' => ['Expected to find at least one <a> with href "/url?a=10#hash"', '<body><a href="/url?a=1#hash"></a></body>', '/url', ['a' => '10'], 'hash'],
+			'failed when $hash mismatches' => ['Expected to find at least one <a> with href "/url?a=1#hash-0"', '<body><a href="/url?a=1#hash"></a></body>', '/url', ['a' => '1'], 'hash-0'],
 		];
 	}
 }
