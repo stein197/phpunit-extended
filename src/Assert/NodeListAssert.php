@@ -1,6 +1,7 @@
 <?php
 namespace Stein197\PHPUnit\Assert;
 
+use Dom\Element;
 use Dom\Node;
 use Dom\NodeList;
 use PHPUnit\Framework\ExpectationFailedException;
