@@ -11,6 +11,7 @@ use Stein197\PHPUnit\Assert\DocumentAssert;
 use Stein197\PHPUnit\Assert\JsonAssert;
 use Stein197\PHPUnit\Assert\ResponseAssert;
 use const Dom\HTML_NO_DEFAULT_NS;
+use const LIBXML_NOERROR;
 
 /**
  * Extended PHPUnit assertions.
@@ -38,15 +39,15 @@ trait TestCase {
 	/**
 	 * @inheritdoc
 	 */
-	public function html(string $html): DocumentAssert {
-		return new DocumentAssert($this, HTMLDocument::createFromString($html, HTML_NO_DEFAULT_NS));
+	public function html(string $html, bool $error = true): DocumentAssert {
+		return new DocumentAssert($this, HTMLDocument::createFromString($html, HTML_NO_DEFAULT_NS | ($error ? 0 : LIBXML_NOERROR)));
 	}
 
 	/**
 	 * @inheritdoc
 	 */
-	public function xml(string $xml): DocumentAssert {
-		return new DocumentAssert($this, XMLDocument::createFromString($xml));
+	public function xml(string $xml, bool $error = true): DocumentAssert {
+		return new DocumentAssert($this, XMLDocument::createFromString($xml, $error ? 0 : LIBXML_NOERROR));
 	}
 
 	/**

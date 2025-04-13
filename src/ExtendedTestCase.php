@@ -34,22 +34,24 @@ interface ExtendedTestCase {
 	/**
 	 * Return an assertion object to test HTML structures.
 	 * @param string $html HTML string.
+	 * @param bool $error Show parsing error messages.
 	 * @return DocumentAssert Assertion object.
 	 * ```php
 	 * $this->html('<p></p>')->query('p')->assertCount(1);
 	 * ```
 	 */
-	public function html(string $html): DocumentAssert;
+	public function html(string $html, bool $error = true): DocumentAssert;
 
 	/**
 	 * Return an assertion object to test XML structures.
 	 * @param string $xml XML string.
+	 * @param bool $error Show parsing error messages.
 	 * @return DocumentAssert Assertion object.
 	 * ```php
 	 * $this->xml('<p></p>')->xpath('//p')->assertCount(1);
 	 * ```
 	 */
-	public function xml(string $xml): DocumentAssert;
+	public function xml(string $xml, bool $error = true): DocumentAssert;
 
 	/**
 	 * Mark test as passed.
