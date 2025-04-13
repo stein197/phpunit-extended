@@ -8,6 +8,7 @@ use PHPUnit\Framework\Attributes\TestDox;
 use PHPUnit\Framework\TestCase as PHPUnitTestCase;
 use Stein197\PHPUnit\ExtendedTestCase;
 use Stein197\PHPUnit\TestCase;
+use function file_get_contents;
 
 final class DocumentAssertTest extends PHPUnitTestCase implements ExtendedTestCase {
 
@@ -94,5 +95,41 @@ final class DocumentAssertTest extends PHPUnitTestCase implements ExtendedTestCa
 	#[Test]
 	public function namespacedXml(): void {
 		$this->xml('<?xml version="1.0" encoding="UTF-8" ?><root xmlns:x="http://example.com"><x:element /></root>')->xpath('//x:element')->assertExists();
+	}
+
+	#[Test]
+	public function complexHtmlDocument(): void {
+		$html = $this->html(file_get_contents(__DIR__ . '/../fixture/data.html'), false);
+		$html->assertAnchorExists('/login', ['action' => 'register']);
+		$html->query('.assert-children-count')->assertChildrenCount(3);
+		$html->query('.assert-count')->assertCount(3);
+		$html->query('.assert-empty')->assertEmpty();
+		$html->query('.assert-not-empty')->assertNotEmpty();
+		$html->query('.assert-exists')->assertExists();
+		$html->query('.assert-not-exists')->assertNotExists();
+		$html->query('.assert-text-equals')->assertTextEquals('Hello, World!');
+		$html->query('.assert-text-equals')->assertTextNotEquals('Text');
+		$html->query('.assert-text-contains')->assertTextContains('World');
+		$html->query('.assert-text-contains')->assertTextNotContains('Text');
+		$html->query('.assert-matches-regex')->assertMatchesRegex('/^\\d+$/');
+		$html->query('.assert-matches-regex')->assertNotMatchesRegex('/^[a-z]+$/');
+	}
+
+	#[Test]
+	public function complexXmlDocument(): void {
+		$html = $this->xml(file_get_contents(__DIR__ . '/../fixture/data.xml'), false);
+		$html->assertAnchorExists('/login', ['action' => 'register']);
+		$html->xpath('//x:body//*[contains(@class, "assert-children-count")]')->assertChildrenCount(3);
+		$html->xpath('//x:body//*[contains(@class, "assert-count")]')->assertCount(3);
+		$html->xpath('//x:body//*[contains(@class, "assert-empty")]')->assertEmpty();
+		$html->xpath('//x:body//*[contains(@class, "assert-not-empty")]')->assertNotEmpty();
+		$html->xpath('//x:body//*[contains(@class, "assert-exists")]')->assertExists();
+		$html->xpath('//x:body//*[contains(@class, "assert-not-exists")]')->assertNotExists();
+		$html->xpath('//x:body//*[contains(@class, "assert-text-equals")]')->assertTextEquals('Hello, World!');
+		$html->xpath('//x:body//*[contains(@class, "assert-text-equals")]')->assertTextNotEquals('Text');
+		$html->xpath('//x:body//*[contains(@class, "assert-text-contains")]')->assertTextContains('World');
+		$html->xpath('//x:body//*[contains(@class, "assert-text-contains")]')->assertTextNotContains('Text');
+		$html->xpath('//x:body//*[contains(@class, "assert-matches-regex")]')->assertMatchesRegex('/^\\d+$/');
+		$html->xpath('//x:body//*[contains(@class, "assert-matches-regex")]')->assertNotMatchesRegex('/^[a-z]+$/');
 	}
 }

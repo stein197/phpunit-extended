@@ -9,6 +9,7 @@ use PHPUnit\Framework\TestCase as PHPUnitTestCase;
 use Stein197\PHPUnit\Assert\JsonAssert;
 use Stein197\PHPUnit\ExtendedTestCase;
 use Stein197\PHPUnit\TestCase;
+use function file_get_contents;
 
 final class JsonAssertTest extends PHPUnitTestCase implements ExtendedTestCase {
 
@@ -439,6 +440,34 @@ final class JsonAssertTest extends PHPUnitTestCase implements ExtendedTestCase {
 			'failed when JSONPath not exists' => ['Expected to find at least one element matching the JSONPath "$.user[*]"', '{}', '$.user[*]'],
 			'failed when one element is object' => ['Expected all elements not to be object for the JSONPath "$.user[*]"', '{"user": [{"a": 1}, "string"]}', '$.user[*]'],
 		];
+	}
+
+	#[Test]
+	public function complexDocument(): void {
+		$json = $this->json(file_get_contents(__DIR__ . '/../fixture/data.json'));
+		$json->assertCount('$.store.book[*]', 3);
+		$json->assertEmpty('$.store.movie');
+		$json->assertNotEmpty('$.store.book');
+		$json->assertExists('$.store.book');
+		$json->assertNotExists('$.store.game');
+		$json->assertEquals('$.store.book[0]', ['null' => null, 'price' => 123, 'sold' => true, 'title' => 'First Book']);
+		$json->assertNotEquals('$.store.book[0]', 123);
+		$json->assertContains('$.store.book[*]', ['price' => 123]);
+		$json->assertNotContains('$.store.book[*]', ['title' => 'Fourth Book']);
+		$json->assertMatchesRegex('$.store.book[*].title', '/Book$/');
+		$json->assertNotMatchesRegex('$.store.book[*].title', '/Game/');
+		$json->assertNull('$.store.book[*].null');
+		$json->assertNotNull('$.store.book[*].title');
+		$json->assertBoolean('$.store.book[*].sold');
+		$json->assertNotBoolean('$.store.book[*].title');
+		$json->assertNumber('$.store.book[*].price');
+		$json->assertNotNumber('$.store.book[*].title');
+		$json->assertString('$.store.book[*].title');
+		$json->assertNotString('$.store.book[*].price');
+		$json->assertArray('$.store.book');
+		$json->assertNotArray('$.store.book[*]');
+		$json->assertObject('$.store.book[*]');
+		$json->assertNotObject('$.store.book');
 	}
 
 	private function assert(?string $exceptionMessage, string $json, callable $f): void {

@@ -1,0 +1,25 @@
+{
+	"store": {
+		"book": [
+			{
+				"null": null,
+				"price": 123,
+				"sold": true,
+				"title": "First Book"
+			},
+			{
+				"null": null,
+				"price": 456,
+				"sold": false,
+				"title": "Second Book"
+			},
+			{
+				"null": null,
+				"price": 789,
+				"sold": true,
+				"title": "First Book"
+			}
+		],
+		"movie": []
+	}
+}
