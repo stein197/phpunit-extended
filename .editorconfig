@@ -9,5 +9,8 @@ insert_final_newline = true
 tab_width = 4
 trim_trailing_whitespace = true
 
-[composer.json]
+[{*.yml,*.yaml,composer.json}]
 indent_style = space
+
+[{*.yml,*.yaml}]
+indent_size = 2
