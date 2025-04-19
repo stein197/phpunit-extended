@@ -40,7 +40,7 @@ interface ExtendedTestCase {
 	 * $this->html('<p></p>')->query('p')->assertCount(1);
 	 * ```
 	 */
-	public function html(string $html, bool $error = true): DocumentAssert;
+	public function html(string $html, bool $error = false): DocumentAssert;
 
 	/**
 	 * Return an assertion object to test XML structures.
@@ -51,7 +51,7 @@ interface ExtendedTestCase {
 	 * $this->xml('<p></p>')->xpath('//p')->assertCount(1);
 	 * ```
 	 */
-	public function xml(string $xml, bool $error = true): DocumentAssert;
+	public function xml(string $xml, bool $error = false): DocumentAssert;
 
 	/**
 	 * Mark test as passed.

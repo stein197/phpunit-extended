@@ -338,6 +338,7 @@ final class ResponseAssert {
 
 	/**
 	 * Return a document assertion object containing the response content.
+	 * @param bool $error Show document parsing errors.
 	 * @return DocumentAssert Document assertion object.
 	 * @throws RuntimeException
 	 * @throws AssertionFailedError If the content-type is not `text/html` nor `text/xml`.
@@ -345,14 +346,14 @@ final class ResponseAssert {
 	 * $this->document()->query('body p')->assertExists();
 	 * ```
 	 */
-	public function document(): DocumentAssert {
+	public function document(bool $error = false): DocumentAssert {
 		if ($this->doc)
 			return $this->doc;
 		$contentType = @$this->response->getHeader('Content-Type')[0];
 		if ($contentType === 'text/html')
-			return $this->doc = $this->test->html($this->getResponseContents());
+			return $this->doc = $this->test->html($this->getResponseContents(), $error);
 		if ($contentType === 'text/xml')
-			return $this->doc = $this->test->xml($this->getResponseContents());
+			return $this->doc = $this->test->xml($this->getResponseContents(), $error);
 		$this->test->fail("Expected the response to have content-type of either \"text/html\" or \"text/xml\", actual: \"{$contentType}\"");
 	}
 

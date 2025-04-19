@@ -39,14 +39,14 @@ trait TestCase {
 	/**
 	 * @inheritdoc
 	 */
-	public function html(string $html, bool $error = true): DocumentAssert {
+	public function html(string $html, bool $error = false): DocumentAssert {
 		return new DocumentAssert($this, HTMLDocument::createFromString($html, HTML_NO_DEFAULT_NS | ($error ? 0 : LIBXML_NOERROR)));
 	}
 
 	/**
 	 * @inheritdoc
 	 */
-	public function xml(string $xml, bool $error = true): DocumentAssert {
+	public function xml(string $xml, bool $error = false): DocumentAssert {
 		return new DocumentAssert($this, XMLDocument::createFromString($xml, $error ? 0 : LIBXML_NOERROR));
 	}
 
