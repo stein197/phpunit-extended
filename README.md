@@ -1,3 +1,6 @@
+![](https://img.shields.io/packagist/v/stein197/phpunit-extended)
+![](https://img.shields.io/github/actions/workflow/status/stein197/phpunit-extended/test.yml)
+
 # PHPUnit Extended
 This package is a small extension to PHPUnit that extends its assertions. The library provides assertions for PSR-7 HTTP responses, XML/HTML documents and JSON structures. The extension uses the following libraries to make it work:
 - [DOM](https://www.php.net/manual/en/book.dom.php): the new native PHP 8.4 DOM library to make assertions against XML/HTML DOM structures
