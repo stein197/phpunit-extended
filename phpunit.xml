@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<phpunit
+	cacheResult="false"
+	colors="true"
+	failOnEmptyTestSuite="true"
+	failOnWarning="true"
+	failOnRisky="true"
+	failOnDeprecation="true"
+	testdox="true"
+	>
+	<testsuites>
+		<testsuite name="All">
+			<directory>test</directory>
+		</testsuite>
+	</testsuites>
+</phpunit>
