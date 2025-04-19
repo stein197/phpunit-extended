@@ -1,6 +1,7 @@
 {
 	"conventionalCommits.scopes": [
 		"document",
+		"git",
 		"github",
 		"json",
 		"readme",
