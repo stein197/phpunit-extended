@@ -5,14 +5,14 @@ use PHPUnit\Framework\AssertionFailedError;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\Attributes\TestDox;
-use PHPUnit\Framework\TestCase as PHPUnitTestCase;
+use PHPUnit\Framework\TestCase;
 use Stein197\PHPUnit\ExtendedTestCaseInterface;
-use Stein197\PHPUnit\TestCase;
+use Stein197\PHPUnit\ExtendedTestCase;
 use function file_get_contents;
 
-final class DocumentAssertTest extends PHPUnitTestCase implements ExtendedTestCaseInterface {
+final class DocumentAssertTest extends TestCase implements ExtendedTestCaseInterface {
 
-	use TestCase;
+	use ExtendedTestCase;
 
 	#[Test]
 	#[DataProvider('dataAssertAnchorExists')]

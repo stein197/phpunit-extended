@@ -16,7 +16,7 @@ use const LIBXML_NOERROR;
 /**
  * Extended PHPUnit assertions.
  */
-trait TestCase {
+trait ExtendedTestCase {
 
 	/**
 	 * @inheritdoc

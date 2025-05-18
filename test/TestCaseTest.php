@@ -3,12 +3,12 @@ namespace Test;
 
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\Attributes\TestDox;
-use PHPUnit\Framework\TestCase as PHPUnitTestCase;
-use Stein197\PHPUnit\TestCase;
+use PHPUnit\Framework\TestCase;
+use Stein197\PHPUnit\ExtendedTestCase;
 
-final class TestCaseTest extends PHPUnitTestCase {
+final class TestCaseTest extends TestCase {
 
-	use TestCase;
+	use ExtendedTestCase;
 
 	#[Test]
 	#[TestDox('pass()')]

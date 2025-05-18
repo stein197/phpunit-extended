@@ -6,15 +6,15 @@ use PHPUnit\Framework\AssertionFailedError;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\Attributes\TestDox;
-use PHPUnit\Framework\TestCase as PHPUnitTestCase;
+use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ResponseInterface;
 use Stein197\PHPUnit\Assert\ResponseAssert;
 use Stein197\PHPUnit\ExtendedTestCaseInterface;
-use Stein197\PHPUnit\TestCase;
+use Stein197\PHPUnit\ExtendedTestCase;
 
-final class ResponseAssertTest extends PHPUnitTestCase implements ExtendedTestCaseInterface {
+final class ResponseAssertTest extends TestCase implements ExtendedTestCaseInterface {
 
-	use TestCase;
+	use ExtendedTestCase;
 
 	#[Test]
 	#[DataProvider('dataAssertContentContains')]
