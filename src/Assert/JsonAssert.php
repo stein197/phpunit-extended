@@ -8,7 +8,7 @@ use PHPUnit\Framework\Exception;
 use PHPUnit\Framework\ExpectationFailedException;
 use PHPUnit\Framework\GeneratorNotSupportedException;
 use PHPUnit\Framework\TestCase;
-use Stein197\PHPUnit\ExtendedTestCase;
+use Stein197\PHPUnit\ExtendedTestCaseInterface;
 use function array_filter;
 use function array_is_list;
 use function gettype;
@@ -27,11 +27,11 @@ use function str_contains;
 final readonly class JsonAssert {
 
 	/**
-	 * @param TestCase&ExtendedTestCase $test PHPUnit test case object to call assertions from.
+	 * @param TestCase&ExtendedTestCaseInterface $test PHPUnit test case object to call assertions from.
 	 * @param JsonObject $json JSON object.
 	 */
 	public function __construct(
-		private TestCase & ExtendedTestCase $test,
+		private TestCase & ExtendedTestCaseInterface $test,
 		private JsonObject $json
 	) {}
 

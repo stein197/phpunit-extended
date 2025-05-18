@@ -6,7 +6,7 @@ use Dom\Element;
 use Dom\XPath;
 use PHPUnit\Framework\AssertionFailedError;
 use PHPUnit\Framework\TestCase;
-use Stein197\PHPUnit\ExtendedTestCase;
+use Stein197\PHPUnit\ExtendedTestCaseInterface;
 use function explode;
 use function http_build_query;
 use function parse_str;
@@ -22,11 +22,11 @@ final readonly class DocumentAssert {
 	private XPath $xpath;
 
 	/**
-	 * @param TestCase&ExtendedTestCase $test PHPUnit test case object to call assertions from.
+	 * @param TestCase&ExtendedTestCaseInterface $test PHPUnit test case object to call assertions from.
 	 * @param Document $doc HTML/XML document.
 	 */
 	public function __construct(
-		private TestCase & ExtendedTestCase $test,
+		private TestCase & ExtendedTestCaseInterface $test,
 		private Document $doc
 	) {
 		$this->xpath = new XPath($doc);

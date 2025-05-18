@@ -7,11 +7,11 @@ use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\Attributes\TestDox;
 use PHPUnit\Framework\TestCase as PHPUnitTestCase;
 use Stein197\PHPUnit\Assert\JsonAssert;
-use Stein197\PHPUnit\ExtendedTestCase;
+use Stein197\PHPUnit\ExtendedTestCaseInterface;
 use Stein197\PHPUnit\TestCase;
 use function file_get_contents;
 
-final class JsonAssertTest extends PHPUnitTestCase implements ExtendedTestCase {
+final class JsonAssertTest extends PHPUnitTestCase implements ExtendedTestCaseInterface {
 
 	use TestCase;
 

@@ -7,10 +7,10 @@ use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\Attributes\TestDox;
 use PHPUnit\Framework\TestCase as PHPUnitTestCase;
 use Stein197\PHPUnit\Assert\NodeListAssert;
-use Stein197\PHPUnit\ExtendedTestCase;
+use Stein197\PHPUnit\ExtendedTestCaseInterface;
 use Stein197\PHPUnit\TestCase;
 
-final class NodeListAssertTest extends PHPUnitTestCase implements ExtendedTestCase {
+final class NodeListAssertTest extends PHPUnitTestCase implements ExtendedTestCaseInterface {
 
 	use TestCase;
 

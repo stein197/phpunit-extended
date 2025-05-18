@@ -7,7 +7,7 @@ use PHPUnit\Framework\GeneratorNotSupportedException;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ResponseInterface;
 use RuntimeException;
-use Stein197\PHPUnit\ExtendedTestCase;
+use Stein197\PHPUnit\ExtendedTestCaseInterface;
 use function explode;
 use function join;
 use function preg_split;
@@ -25,7 +25,7 @@ final class ResponseAssert {
 	private ?JsonAssert $json = null;
 
 	public function __construct(
-		private TestCase & ExtendedTestCase $test,
+		private TestCase & ExtendedTestCaseInterface $test,
 		private ResponseInterface $response
 	) {}
 

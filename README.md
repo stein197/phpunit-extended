@@ -19,11 +19,11 @@ namespace Test;
 
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
-use Stein197\PHPUnit\ExtendedTestCase;
-use Stein197\PHPUnit\TestCase as TestCaseTrait; // Trait that extends the basic PHPUnit assertion functionality and implements the ExtendedTestCase interface
+use Stein197\PHPUnit\ExtendedTestCaseInterface;
+use Stein197\PHPUnit\TestCase as TestCaseTrait; // Trait that extends the basic PHPUnit assertion functionality and implements the ExtendedTestCaseInterface interface
 
 // Your test class
-final class ResponseTest extends TestCase implements ExtendedTestCase {
+final class ResponseTest extends TestCase implements ExtendedTestCaseInterface {
 
 	use TestCaseTrait; // Include the extended assertions
 

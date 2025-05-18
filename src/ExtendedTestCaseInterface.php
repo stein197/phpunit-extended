@@ -9,7 +9,7 @@ use Stein197\PHPUnit\Assert\ResponseAssert;
 /**
  * Extended PHPUnit assertions.
  */
-interface ExtendedTestCase {
+interface ExtendedTestCaseInterface {
 
 	/**
 	 * Return an assertion object to test response objects.

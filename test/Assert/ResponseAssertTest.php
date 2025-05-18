@@ -9,10 +9,10 @@ use PHPUnit\Framework\Attributes\TestDox;
 use PHPUnit\Framework\TestCase as PHPUnitTestCase;
 use Psr\Http\Message\ResponseInterface;
 use Stein197\PHPUnit\Assert\ResponseAssert;
-use Stein197\PHPUnit\ExtendedTestCase;
+use Stein197\PHPUnit\ExtendedTestCaseInterface;
 use Stein197\PHPUnit\TestCase;
 
-final class ResponseAssertTest extends PHPUnitTestCase implements ExtendedTestCase {
+final class ResponseAssertTest extends PHPUnitTestCase implements ExtendedTestCaseInterface {
 
 	use TestCase;
 
