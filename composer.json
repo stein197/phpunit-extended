@@ -14,7 +14,7 @@
             "Stein197\\PHPUnit\\": "src/"
         },
         "files": [
-            "src/index.php"
+            "src/util.php"
         ]
     },
     "autoload-dev": {
