@@ -11,6 +11,7 @@ use Stein197\PHPUnit\ExtendedTestCaseInterface;
 use function explode;
 use function join;
 use function preg_split;
+use function strcasecmp;
 use function trim;
 use const PREG_SPLIT_NO_EMPTY;
 
@@ -130,7 +131,10 @@ final class ResponseAssert {
 	 * ```
 	 */
 	public function assertContentType(string $contentType): void {
-		$this->assertHeaderEquals('Content-Type', $contentType);
+		$values = $this->response->getHeader('Content-Type');
+		$header = $values ? $values[0] : '';
+		[$actualType] = preg_split('/\\s*;\\s*/', $header);
+		$this->test->assertEquals(0, strcasecmp($actualType, $contentType), "Expected the response to have the header \"Content-Type\" with value \"{$contentType}\", actual: \"{$actualType}\"");
 	}
 
 	/**

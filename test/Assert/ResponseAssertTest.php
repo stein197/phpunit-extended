@@ -125,6 +125,11 @@ final class ResponseAssertTest extends TestCase implements ExtendedTestCaseInter
 	public static function dataAssertContentType(): array {
 		return [
 			'passed' => [null, new Response(200, ['Content-Type' => 'text/html']), 'text/html'],
+			'passed with charset without space' => [null, new Response(200, ['content-type' => 'text/html;charset=utf-8']), 'text/html'],
+			'passed with charset and space' => [null, new Response(200, ['content-type' => 'text/html; charset=utf-8']), 'text/html'],
+			'passed with boundary without space' => [null, new Response(200, ['content-type' => 'text/html;boundary=----']), 'text/html'],
+			'passed with boundary and space' => [null, new Response(200, ['content-type' => 'text/html; boundary=----']), 'text/html'],
+			'passed with charset and boundary' => [null, new Response(200, ['content-type' => 'text/html;charset=utf-8;boundary=----']), 'text/html'],
 			'failed' => ['Expected the response to have the header "Content-Type" with value "text/html", actual: ""', new Response(200), 'text/html'],
 		];
 	}
