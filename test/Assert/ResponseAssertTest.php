@@ -125,6 +125,11 @@ final class ResponseAssertTest extends TestCase implements ExtendedTestCaseInter
 	public static function dataAssertContentType(): array {
 		return [
 			'passed' => [null, new Response(200, ['Content-Type' => 'text/html']), 'text/html'],
+			'passed with charset without space' => [null, new Response(200, ['content-type' => 'text/html;charset=utf-8']), 'text/html'],
+			'passed with charset and space' => [null, new Response(200, ['content-type' => 'text/html; charset=utf-8']), 'text/html'],
+			'passed with boundary without space' => [null, new Response(200, ['content-type' => 'text/html;boundary=----']), 'text/html'],
+			'passed with boundary and space' => [null, new Response(200, ['content-type' => 'text/html; boundary=----']), 'text/html'],
+			'passed with charset and boundary' => [null, new Response(200, ['content-type' => 'text/html;charset=utf-8;boundary=----']), 'text/html'],
 			'failed' => ['Expected the response to have the header "Content-Type" with value "text/html", actual: ""', new Response(200), 'text/html'],
 		];
 	}
@@ -386,6 +391,8 @@ final class ResponseAssertTest extends TestCase implements ExtendedTestCaseInter
 			'XML failed' => ['Expected to find at least one element matching the query "//body/p"', new Response(200, ['Content-Type' => 'text/xml'], '<body></body>'), '//body/p'],
 			'invalid content-type' => ['Expected the response to have content-type of either "text/html" or "text/xml", actual: "text/plain"', new Response(200, ['Content-Type' => 'text/plain'], '<body><p></p></body>'), '//body/p'],
 			'no content-type' => ['Expected the response to have content-type of either "text/html" or "text/xml", actual: ""', new Response(200, [], '<body><p></p></body>'), '//body/p'],
+			'text/html + charset' => [null, new Response(200, ['Content-Type' => 'text/html; charset=utf-8'], '<body><p></p></body>'), '//body/p'],
+			'text/xml + charset' => [null, new Response(200, ['Content-Type' => 'text/xml; charset=utf-8'], '<body><p></p></body>'), '//body/p'],
 		];
 	}
 
@@ -405,6 +412,7 @@ final class ResponseAssertTest extends TestCase implements ExtendedTestCaseInter
 			'invalid content-type' => ['Expected the response to have content-type "application/json", actual: "text/plain"', new Response(200, ['Content-Type' => 'text/plain'], '{}'), '$.user', 2],
 			'no content-type' => ['Expected the response to have content-type "application/json", actual: ""', new Response(200, [], '{}'), '$.user', 2],
 			'invalid JSON' => ['string does not contain a valid JSON object', new Response(200, ['Content-Type' => 'application/json'], '{"user":'), '$.user', 2],
+			'content-type + encoding' => [null, new Response(200, ['Content-Type' => 'application/json;charset=utf-8'], '{"user": [{}, {}]}'), '$.user[*]', 2]
 		];
 	}
 

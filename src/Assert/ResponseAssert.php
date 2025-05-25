@@ -11,6 +11,7 @@ use Stein197\PHPUnit\ExtendedTestCaseInterface;
 use function explode;
 use function join;
 use function preg_split;
+use function strcasecmp;
 use function trim;
 use const PREG_SPLIT_NO_EMPTY;
 
@@ -130,7 +131,8 @@ final class ResponseAssert {
 	 * ```
 	 */
 	public function assertContentType(string $contentType): void {
-		$this->assertHeaderEquals('Content-Type', $contentType);
+		$actualType = $this->getResponseContentType();
+		$this->test->assertEquals(0, strcasecmp($actualType, $contentType), "Expected the response to have the header \"Content-Type\" with value \"{$contentType}\", actual: \"{$actualType}\"");
 	}
 
 	/**
@@ -349,10 +351,10 @@ final class ResponseAssert {
 	public function document(bool $error = false): DocumentAssert {
 		if ($this->doc)
 			return $this->doc;
-		$contentType = @$this->response->getHeader('Content-Type')[0];
-		if ($contentType === 'text/html')
+		$contentType = $this->getResponseContentType();
+		if (strcasecmp($contentType, 'text/html') === 0)
 			return $this->doc = $this->test->html($this->getResponseContents(), $error);
-		if ($contentType === 'text/xml')
+		if (strcasecmp($contentType, 'text/xml') === 0)
 			return $this->doc = $this->test->xml($this->getResponseContents(), $error);
 		$this->test->fail("Expected the response to have content-type of either \"text/html\" or \"text/xml\", actual: \"{$contentType}\"");
 	}
@@ -368,8 +370,8 @@ final class ResponseAssert {
 	public function json(): JsonAssert {
 		if ($this->json)
 			return $this->json;
-		$contentType = @$this->response->getHeader('Content-Type')[0];
-		if ($contentType === 'application/json')
+		$contentType = $this->getResponseContentType();
+		if (strcasecmp($contentType, 'application/json') === 0)
 			return $this->json = $this->test->json($this->getResponseContents());
 		$this->test->fail("Expected the response to have content-type \"application/json\", actual: \"{$contentType}\"");
 	}
@@ -388,5 +390,11 @@ final class ResponseAssert {
 			$result[$k] = $v;
 		}
 		return $result;
+	}
+
+	private function getResponseContentType(): string {
+		$values = $this->response->getHeader('Content-Type');
+		$header = $values ? $values[0] : '';
+		return preg_split('/\\s*;\\s*/', $header)[0];
 	}
 }
