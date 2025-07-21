@@ -444,7 +444,7 @@ final class JsonAssertTest extends TestCase implements ExtendedTestCaseInterface
 
 	#[Test]
 	public function complexDocument(): void {
-		$json = $this->json(file_get_contents(__DIR__ . '/../fixture/data.json'));
+		$json = $this->createJsonAssertion(file_get_contents(__DIR__ . '/../fixture/data.json'));
 		$json->assertCount('$.store.book[*]', 3);
 		$json->assertEmpty('$.store.movie');
 		$json->assertNotEmpty('$.store.book');
@@ -475,6 +475,6 @@ final class JsonAssertTest extends TestCase implements ExtendedTestCaseInterface
 			$this->expectException(AssertionFailedError::class);
 			$this->expectExceptionMessage($exceptionMessage);
 		}
-		$f($this->json($json));
+		$f($this->createJsonAssertion($json));
 	}
 }

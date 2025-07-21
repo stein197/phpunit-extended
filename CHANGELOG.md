@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 3.0.0 - 2025-07-21
+### Changed
+- All methods in the trait `ExtendedTestCase` are renamed to `create<old name>Assertion`
+
 ## 2.0.1 - 2025-05-25
 ### Fixed
 - `assertContentType(string $contentType)`, `document()` and `json()` methods don't fail when the header contains charset or boundary directives

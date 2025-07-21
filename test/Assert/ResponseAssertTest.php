@@ -422,6 +422,6 @@ final class ResponseAssertTest extends TestCase implements ExtendedTestCaseInter
 			$this->expectException(AssertionFailedError::class);
 			$this->expectExceptionMessage($exceptionMessage);
 		}
-		$f($this->response($response));
+		$f($this->createResponseAssertion($response));
 	}
 }

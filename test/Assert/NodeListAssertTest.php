@@ -285,10 +285,10 @@ final class NodeListAssertTest extends TestCase implements ExtendedTestCaseInter
 		}
 		switch ($format) {
 			case 'html':
-				$f($this->html($content)->query($query));
+				$f($this->createHtmlAssertion($content)->query($query));
 				break;
 			case 'xml':
-				$f($this->xml($content)->xpath($query));
+				$f($this->createXmlAssertion($content)->xpath($query));
 				break;
 		}
 	}

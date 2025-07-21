@@ -31,7 +31,7 @@ final class ResponseTest extends TestCase implements ExtendedTestCaseInterface {
 	public function testResponse(): void {
 		// HTTP response assertions
 		$response = $this->request('/home'); // Anything that returns a PSR-7 response object
-		$response = $this->response($response); // Wrap the PSR-7 response in an assertion object
+		$response = $this->createResponseAssertion($response); // Wrap the PSR-7 response in an assertion object
 		$response->assertOk(); // Assert the status code is 200
 		$response->assertHeaderEquals('Content-Type', 'text/html'); // Assert that there is a header 'Content-Type' with the value 'text/html'
 		// ...
@@ -43,13 +43,13 @@ final class ResponseTest extends TestCase implements ExtendedTestCaseInterface {
 		// ...
 
 		// JSON assertions
-		$json = $response->json(); // Return a JsonAssert containing the response body
+		$json = $response->createJsonAssertion(); // Return a JsonAssert containing the response body
 		$json->assertExists('$.user'); // Assert that there is a given JSONPath
 		// ...
 
-		$this->json('{...}'); // Wrap a JSON string
-		$this->html('<!DOCTYPE html>...'); // Wrap an HTML string
-		$this->xml('<?xml version="1.0" ?>...'); // Wrap an XML string
+		$this->createJsonAssertion('{...}'); // Wrap a JSON string
+		$this->createHtmlAssertion(('<!DOCTYPE html>...'); // Wrap an HTML string
+		$this->createXmlAssertion(('<?xml version="1.0" ?>...'); // Wrap an XML string
 	}
 }
 ```
@@ -66,10 +66,10 @@ Run `make test`.
 
 ## Documentation
 The main methods of the trait are:
-- `response(ResponseInterface $response): ResponseAssert`: Wraps an HTTP response object in an assertion one
-- `json(string $json): JsonAssert`: Wraps a JSON string in an assertion object
-- `html(string $html): DocumentAssert`: Wraps an HTML string in an assertion object
-- `xml(string $xml): DocumentAssert`: Wraps an XML string in an assertion object
+- `createResponseAssertion(ResponseInterface $response): ResponseAssert`: Wraps an HTTP response object in an assertion one
+- `createJsonAssertion(string $json): JsonAssert`: Wraps a JSON string in an assertion object
+- `createHtmlAssertion(string $html): DocumentAssert`: Wraps an HTML string in an assertion object
+- `createXmlAssertion(string $xml): DocumentAssert`: Wraps an XML string in an assertion object
 - `pass(): void`: Marks test as passed
 
 The whole documentation to every assertion method can be found in the phpdoc comments in the source code.

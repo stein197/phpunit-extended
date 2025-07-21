@@ -353,9 +353,9 @@ final class ResponseAssert {
 			return $this->doc;
 		$contentType = $this->getResponseContentType();
 		if (strcasecmp($contentType, 'text/html') === 0)
-			return $this->doc = $this->test->html($this->getResponseContents(), $error);
+			return $this->doc = $this->test->createHtmlAssertion($this->getResponseContents(), $error);
 		if (strcasecmp($contentType, 'text/xml') === 0)
-			return $this->doc = $this->test->xml($this->getResponseContents(), $error);
+			return $this->doc = $this->test->createXmlAssertion($this->getResponseContents(), $error);
 		$this->test->fail("Expected the response to have content-type of either \"text/html\" or \"text/xml\", actual: \"{$contentType}\"");
 	}
 
@@ -364,7 +364,7 @@ final class ResponseAssert {
 	 * @return JsonAssert JSON assertion object.
 	 * @throws AssertionFailedError If the content-type is not `application/json`.
 	 * ```php
-	 * $this->json()->assertCount('$.books[*]', 10);
+	 * $this->createJsonAssertion()->assertCount('$.books[*]', 10);
 	 * ```
 	 */
 	public function json(): JsonAssert {
@@ -372,7 +372,7 @@ final class ResponseAssert {
 			return $this->json;
 		$contentType = $this->getResponseContentType();
 		if (strcasecmp($contentType, 'application/json') === 0)
-			return $this->json = $this->test->json($this->getResponseContents());
+			return $this->json = $this->test->createJsonAssertion($this->getResponseContents());
 		$this->test->fail("Expected the response to have content-type \"application/json\", actual: \"{$contentType}\"");
 	}
 

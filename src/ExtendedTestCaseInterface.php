@@ -16,20 +16,20 @@ interface ExtendedTestCaseInterface {
 	 * @param ResponseInterface $response PSR-7 response object.
 	 * @return ResponseAssert Assertion object.
 	 * ```php
-	 * $this->request(new Response(...))->assertStatus(200);
+	 * $this->createResponseAssertion(new Response(...))->assertStatus(200);
 	 * ```
 	 */
-	public function response(ResponseInterface $response): ResponseAssert;
+	public function createResponseAssertion(ResponseInterface $response): ResponseAssert;
 
 	/**
 	 * Return an assertion object to test JSON structures by JSONPath.
 	 * @param string $json JSON string.
 	 * @return JsonAssert JSON assertion object.
 	 * ```php
-	 * $this->json('{"name":"John"}')->assertExists('$.name');
+	 * $this->createJsonAssertion('{"name":"John"}')->assertExists('$.name');
 	 * ```
 	 */
-	public function json(string $json): JsonAssert;
+	public function createJsonAssertion(string $json): JsonAssert;
 
 	/**
 	 * Return an assertion object to test HTML structures.
@@ -37,10 +37,10 @@ interface ExtendedTestCaseInterface {
 	 * @param bool $error Show parsing error messages.
 	 * @return DocumentAssert Assertion object.
 	 * ```php
-	 * $this->html('<p></p>')->query('p')->assertCount(1);
+	 * $this->createHtmlAssertion(('<p></p>')->query('p')->assertCount(1);
 	 * ```
 	 */
-	public function html(string $html, bool $error = false): DocumentAssert;
+	public function createHtmlAssertion(string $html, bool $error = false): DocumentAssert;
 
 	/**
 	 * Return an assertion object to test XML structures.
@@ -48,10 +48,10 @@ interface ExtendedTestCaseInterface {
 	 * @param bool $error Show parsing error messages.
 	 * @return DocumentAssert Assertion object.
 	 * ```php
-	 * $this->xml('<p></p>')->xpath('//p')->assertCount(1);
+	 * $this->createXmlAssertion(('<p></p>')->xpath('//p')->assertCount(1);
 	 * ```
 	 */
-	public function xml(string $xml, bool $error = false): DocumentAssert;
+	public function createXmlAssertion(string $xml, bool $error = false): DocumentAssert;
 
 	/**
 	 * Mark test as passed.

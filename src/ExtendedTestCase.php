@@ -21,14 +21,14 @@ trait ExtendedTestCase {
 	/**
 	 * @inheritdoc
 	 */
-	public function response(ResponseInterface $response): ResponseAssert {
+	public function createResponseAssertion(ResponseInterface $response): ResponseAssert {
 		return new ResponseAssert($this, $response);
 	}
 
 	/**
 	 * @inheritdoc
 	 */
-	public function json(string $json): JsonAssert {
+	public function createJsonAssertion(string $json): JsonAssert {
 		try {
 			return new JsonAssert($this, new JsonObject($json));
 		} catch (InvalidJsonException $ex) {
@@ -39,14 +39,14 @@ trait ExtendedTestCase {
 	/**
 	 * @inheritdoc
 	 */
-	public function html(string $html, bool $error = false): DocumentAssert {
+	public function createHtmlAssertion(string $html, bool $error = false): DocumentAssert {
 		return new DocumentAssert($this, HTMLDocument::createFromString($html, HTML_NO_DEFAULT_NS | ($error ? 0 : LIBXML_NOERROR)));
 	}
 
 	/**
 	 * @inheritdoc
 	 */
-	public function xml(string $xml, bool $error = false): DocumentAssert {
+	public function createXmlAssertion(string $xml, bool $error = false): DocumentAssert {
 		return new DocumentAssert($this, XMLDocument::createFromString($xml, $error ? 0 : LIBXML_NOERROR));
 	}
 

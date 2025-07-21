@@ -22,7 +22,7 @@ final class DocumentAssertTest extends TestCase implements ExtendedTestCaseInter
 			$this->expectException(AssertionFailedError::class);
 			$this->expectExceptionMessage($exceptionMessage);
 		}
-		$this->html('<!DOCTYPE html>' . $content)->assertAnchorExists($expectedUrl, $expectedQuery, $expectedHash);
+		$this->createHtmlAssertion('<!DOCTYPE html>' . $content)->assertAnchorExists($expectedUrl, $expectedQuery, $expectedHash);
 	}
 
 	public static function dataAssertAnchorExists(): array {
@@ -65,7 +65,7 @@ final class DocumentAssertTest extends TestCase implements ExtendedTestCaseInter
 			$this->expectException(AssertionFailedError::class);
 			$this->expectExceptionMessage($exceptionMessage);
 		}
-		$this->html('<!DOCTYPE html>' . $content)->assertAnchorNotExists($expectedUrl, $expectedQuery, $expectedHash);
+		$this->createHtmlAssertion('<!DOCTYPE html>' . $content)->assertAnchorNotExists($expectedUrl, $expectedQuery, $expectedHash);
 	}
 
 	public static function dataAssertAnchorNotExists(): array {
@@ -94,12 +94,12 @@ final class DocumentAssertTest extends TestCase implements ExtendedTestCaseInter
 
 	#[Test]
 	public function namespacedXml(): void {
-		$this->xml('<?xml version="1.0" encoding="UTF-8" ?><root xmlns:x="http://example.com"><x:element /></root>')->xpath('//x:element')->assertExists();
+		$this->createXmlAssertion('<?xml version="1.0" encoding="UTF-8" ?><root xmlns:x="http://example.com"><x:element /></root>')->xpath('//x:element')->assertExists();
 	}
 
 	#[Test]
 	public function complexHtmlDocument(): void {
-		$html = $this->html(file_get_contents(__DIR__ . '/../fixture/data.html'), false);
+		$html = $this->createHtmlAssertion(file_get_contents(__DIR__ . '/../fixture/data.html'), false);
 		$html->assertAnchorExists('/login', ['action' => 'register']);
 		$html->query('.assert-children-count')->assertChildrenCount(3);
 		$html->query('.assert-count')->assertCount(3);
@@ -117,7 +117,7 @@ final class DocumentAssertTest extends TestCase implements ExtendedTestCaseInter
 
 	#[Test]
 	public function complexXmlDocument(): void {
-		$html = $this->xml(file_get_contents(__DIR__ . '/../fixture/data.xml'), false);
+		$html = $this->createXmlAssertion(file_get_contents(__DIR__ . '/../fixture/data.xml'), false);
 		$html->assertAnchorExists('/login', ['action' => 'register']);
 		$html->xpath('//x:body//*[contains(@class, "assert-children-count")]')->assertChildrenCount(3);
 		$html->xpath('//x:body//*[contains(@class, "assert-count")]')->assertCount(3);
