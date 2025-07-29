@@ -4,10 +4,12 @@
     "type": "library",
     "license": "MIT",
     "scripts": {
-        "test": "@php vendor/bin/phpunit"
+        "test": "@php vendor/bin/phpunit",
+        "phpstan": "phpstan analyse --level 10 src"
     },
     "scripts-descriptions": {
-        "test": "Run PHPUnit tests"
+        "test": "Run PHPUnit tests",
+        "phpstan": "Run PHPStan checks"
     },
     "autoload": {
         "psr-4": {
@@ -29,6 +31,7 @@
         "galbar/jsonpath": "^3.0"
     },
     "require-dev": {
-        "nyholm/psr7": "^1.8"
+        "nyholm/psr7": "^1.8",
+        "phpstan/phpstan": "^2.1"
     }
 }

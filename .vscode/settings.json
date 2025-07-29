@@ -5,6 +5,7 @@
 		"git",
 		"github",
 		"json",
+		"lint",
 		"readme",
 		"response",
 		"test"
